@@ -1,15 +1,16 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta } from "@storybook/react";
 
 import {
-  DateValueBox,
-  DateValueBoxProps,
-  DateValueInputs,
-} from "./DateValueBox";
-import { useRef } from "react";
+  InputValue,
+  InputValueProvider,
+  useInputValueContext,
+} from "../../data";
+import ConnectedDateValueBox from "./ConnectedDateValueBox";
+import { useEffect, useState } from "react";
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta = {
-  title: "Components/DateValueBox",
-  component: DateValueBox,
+  title: "Components/ConnectedDateValueBox",
+  component: ConnectedDateValueBox,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/react/configure/story-layout
     layout: "centered",
@@ -18,17 +19,38 @@ const meta = {
   tags: ["autodocs"],
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {},
-} satisfies Meta<typeof DateValueBox>;
+} satisfies Meta<typeof ConnectedDateValueBox>;
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
 export const Default = () => {
-  const value = useRef<DateValueInputs>({
+  return (
+    <InputValueProvider>
+      <Child />
+    </InputValueProvider>
+  );
+};
+
+const Child = () => {
+  const [isReady, setIsReady] = useState<boolean>(false);
+
+  const { setInputValues, getInputValueKeys } = useInputValueContext();
+  const value: InputValue = {
     Title: "Groceries",
     "Current Value": 3,
     "Start Date": "2023-06",
     "End Date": "2024-06",
+    "APY (%)": 5,
+  };
+
+  useEffect(() => {
+    if (!isReady) {
+      setInputValues([value]);
+      setIsReady(true);
+    }
   });
-  return <DateValueBox {...{ value, deleteFunction: () => {} }} />;
+
+  return isReady ? (
+    <ConnectedDateValueBox {...{ id: getInputValueKeys()[0] }} />
+  ) : null;
 };
