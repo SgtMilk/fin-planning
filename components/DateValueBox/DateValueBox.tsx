@@ -80,7 +80,7 @@ const DateValueBox = ({
 
   const xIcon = () => {
     const props = {
-      handleFunction: () => deleteFunction,
+      handleFunction: deleteFunction,
       component: [
         <circle cx="12" cy="12" r="10" key="circle"></circle>,
         <line x1="15" y1="9" x2="9" y2="15" key="x line 1"></line>,

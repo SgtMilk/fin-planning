@@ -1,6 +1,7 @@
 import { InputValueKey, useInputValueContext } from "../../data";
-import React, { useMemo } from "react";
+import React from "react";
 import DateValueBox from "./DateValueBox";
+import { DragObject } from "../Base";
 
 export interface ConnectedDateValueBoxProps {
   id: string;
@@ -19,7 +20,11 @@ const ConnectedDateValueBox = ({ id }: ConnectedDateValueBoxProps) => {
   const deleteFunction = () => {
     deleteInputValue(id);
   };
-  return <DateValueBox {...{ value, updateValue, deleteFunction }} />;
+  return (
+    <DragObject itemID={id}>
+      <DateValueBox {...{ value, updateValue, deleteFunction }} />
+    </DragObject>
+  );
 };
 
 export default ConnectedDateValueBox;

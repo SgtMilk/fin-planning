@@ -1,7 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { ReactElement, useRef, useState } from "react";
 import ConnectedDateValueBox from "../DateValueBox/ConnectedDateValueBox";
 import { useInputValueContext } from "@/data";
-import { SvgIcon } from "../Base";
+import { DropTarget, SvgIcon } from "../Base";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 const BoxScroller = () => {
   const { getTypes, addEmptyInputValue } = useInputValueContext();
@@ -20,31 +22,33 @@ const BoxScroller = () => {
 
   return (
     <div className="bg-slate-100">
-      <div className="px-1 py-5 bg-slate-300">
-        <form
-          className="flex flex-row justify-between align-center w-96 px-6"
-          onSubmit={(e: any) => e.preventDefault()}
-        >
-          <input
-            className="bg-slate-50 border border-slate-300 text-slate-900 w-40 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-slate-100"
-            type="text"
-            id="newCategoryInput"
-            onChange={(e: any) => {
-              newCategory.current = e.target.value;
-            }}
-          />
-          <button
-            className="bg-cyan-700 hover:bg-cyan-900 text-white font-bold py-2 px-4 rounded"
-            onClick={addCategory}
+      <DndProvider backend={HTML5Backend}>
+        <div className="px-1 py-5 bg-slate-300">
+          <form
+            className="flex flex-row justify-between align-center w-96 px-6"
+            onSubmit={(e: any) => e.preventDefault()}
           >
-            Add Category
-          </button>
-        </form>
-      </div>
+            <input
+              className="bg-slate-50 border border-slate-300 text-slate-900 mr-6 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-slate-100"
+              type="text"
+              id="newCategoryInput"
+              onChange={(e: any) => {
+                newCategory.current = e.target.value;
+              }}
+            />
+            <button
+              className="bg-cyan-700 hover:bg-cyan-900 text-white font-bold py-2 px-4 rounded whitespace-nowrap"
+              onClick={addCategory}
+            >
+              Add Category
+            </button>
+          </form>
+        </div>
 
-      {sections.map((section) => (
-        <BoxScrollerSection key={section} title={section} />
-      ))}
+        {sections.map((section) => (
+          <BoxScrollerSection key={section} title={section} />
+        ))}
+      </DndProvider>
     </div>
   );
 };
@@ -86,22 +90,24 @@ const BoxScrollerSection = ({ title }: BoxScrollerSectionProps) => {
   };
 
   return (
-    <div className="border border-slate-200">
-      <div className="px-1 py-5 text-lg">
-        <div className="flex flex-row justify-between w-96 px-6">
-          {caretIcon()}
-          <p>{title}</p>
-          {addIcon()}
+    <DropTarget type={title}>
+      <div className="border border-slate-200">
+        <div className="px-1 py-5 text-lg">
+          <div className="flex flex-row justify-between w-96 px-6">
+            {caretIcon()}
+            <p>{title}</p>
+            {addIcon()}
+          </div>
         </div>
+        {isOpen
+          ? keys.map((key) => (
+              <div key={key} className="p-1">
+                <ConnectedDateValueBox id={key} />
+              </div>
+            ))
+          : null}
       </div>
-      {isOpen
-        ? keys.map((key) => (
-            <div key={key} className="p-1">
-              <ConnectedDateValueBox id={key} />
-            </div>
-          ))
-        : null}
-    </div>
+    </DropTarget>
   );
 };
 
