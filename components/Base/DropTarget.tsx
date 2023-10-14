@@ -15,9 +15,5 @@ export const DropTarget = ({
     drop: (monitor: any) => modifyInputValue(monitor.itemID, "Type", type),
   }));
 
-  return (
-    <div ref={drop} style={{ height: "100%", width: "100%" }}>
-      {children}
-    </div>
-  );
+  return <div ref={drop}>{children}</div>;
 };

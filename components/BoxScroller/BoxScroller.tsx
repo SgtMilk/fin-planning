@@ -21,7 +21,7 @@ const BoxScroller = () => {
   };
 
   return (
-    <div className="bg-slate-100">
+    <div className="bg-slate-100 h-screen">
       <DndProvider backend={HTML5Backend}>
         <div className="px-1 py-5 bg-slate-300">
           <form
@@ -45,9 +45,11 @@ const BoxScroller = () => {
           </form>
         </div>
 
-        {sections.map((section) => (
-          <BoxScrollerSection key={section} title={section} />
-        ))}
+        <div className="overflow-y-scroll no-scrollbar h-[calc(100%-5.5rem)]">
+          {sections.map((section) => (
+            <BoxScrollerSection key={section} title={section} />
+          ))}
+        </div>
       </DndProvider>
     </div>
   );
