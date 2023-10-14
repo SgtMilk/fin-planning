@@ -12,6 +12,7 @@ export interface InputValue {
   "Start Date": string;
   "End Date": string;
   "APY (%)": number;
+  Type: string;
 }
 
 export type InputValueKey =
@@ -19,7 +20,8 @@ export type InputValueKey =
   | "Current Value"
   | "Start Date"
   | "End Date"
-  | "APY (%)";
+  | "APY (%)"
+  | "Type";
 
 export interface InputValueStore {
   [key: string]: InputValue;
@@ -37,9 +39,14 @@ interface InputValueAction {
   data: any;
 }
 
+export type FilterFunction = (
+  value: [key: string, value: InputValue]
+) => boolean;
+
 interface ContextFunctions {
   setInputValues: (data: Array<InputValue>) => void;
   addInputValue: (data: InputValue) => void;
+  addEmptyInputValue: (type: string) => void;
   modifyInputValue: (
     id: string,
     key: InputValueKey,
@@ -48,7 +55,8 @@ interface ContextFunctions {
   deleteInputValue: (id: string) => void;
   getInputValue: (id: string) => InputValue;
   getInputValueKeys: () => Array<string>;
-  state: InputValueStore;
+  getInputValueKeysByType: (type: string) => Array<string>;
+  getTypes: () => Array<string>;
 }
 
 const InputValueContext = createContext<ContextFunctions>(
@@ -75,7 +83,7 @@ const InputValuesReducer = (
       );
 
     case ReducerTypes.ADD_INPUT_VALUE:
-      return { ...state, [getNewKey()]: action.data };
+      return { [getNewKey()]: action.data, ...state };
 
     case ReducerTypes.MODIFY_INPUT_VALUE:
       const id: string = action.data.id;
@@ -108,6 +116,22 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
     addInputValue: (data: InputValue) =>
       dispatch({ type: ReducerTypes.ADD_INPUT_VALUE, data }),
 
+    addEmptyInputValue: (type: string) => {
+      const curDate = new Date();
+      const curMonth = `${curDate.getFullYear()}-${
+        curDate.getMonth() < 10 ? "0" : ""
+      }${curDate.getMonth()}`;
+      const emptyInputValue = {
+        Title: "New Value",
+        "Current Value": 0,
+        "Start Date": curMonth,
+        "End Date": curMonth,
+        "APY (%)": 4,
+        Type: type,
+      };
+      dispatch({ type: ReducerTypes.ADD_INPUT_VALUE, data: emptyInputValue });
+    },
+
     deleteInputValue: (id: string) =>
       dispatch({ type: ReducerTypes.DELETE_INPUT_VALUE, data: id }),
 
@@ -119,12 +143,21 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
 
     getInputValue: (id: string) => state[id],
 
-    getInputValueKeys: useMemo(() => {
-      // reloads on store change
-      return () => Object.keys(state);
-    }, [state]),
+    getInputValueKeys: () => Object.keys(state),
 
-    state,
+    getInputValueKeysByType: (type: string) =>
+      Object.entries(state)
+        .filter(([_, value]) => value["Type"] == type)
+        .map((entry) => entry[0]),
+
+    getTypes: () =>
+      Object.values(state).reduce(
+        (accumulator, curVal) =>
+          accumulator.includes(curVal["Type"])
+            ? accumulator
+            : [...accumulator, curVal["Type"]],
+        [] as Array<string>
+      ),
   };
 
   return (

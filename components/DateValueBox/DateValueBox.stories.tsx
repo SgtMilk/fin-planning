@@ -41,6 +41,7 @@ const Child = () => {
     "Start Date": "2023-06",
     "End Date": "2024-06",
     "APY (%)": 5,
+    Type: "beep",
   };
 
   useEffect(() => {
