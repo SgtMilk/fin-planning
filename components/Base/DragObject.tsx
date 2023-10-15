@@ -1,3 +1,5 @@
+"use client";
+
 import { useDrag } from "react-dnd";
 
 export const DragObject = ({

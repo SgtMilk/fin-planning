@@ -1,4 +1,14 @@
-import { createContext, useReducer, useContext, ReactNode } from "react";
+"use client";
+
+import {
+  createContext,
+  useReducer,
+  useContext,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react";
+import Cookies from "js-cookie";
 
 export interface InputValue {
   Title: string;
@@ -22,6 +32,7 @@ export interface InputValueStore {
 }
 
 enum ReducerTypes {
+  SET_STORE,
   SET_INPUT_VALUES,
   ADD_INPUT_VALUE,
   MODIFY_INPUT_VALUE,
@@ -67,6 +78,8 @@ const InputValuesReducer = (
   action: InputValueAction
 ): InputValueStore => {
   switch (action.type) {
+    case ReducerTypes.SET_STORE:
+      return action.data;
     case ReducerTypes.SET_INPUT_VALUES:
       return action.data.reduce(
         (accumulator: InputValueStore, inputValue: InputValue) => ({
@@ -101,9 +114,14 @@ const InputValuesReducer = (
 };
 
 export const InputValueProvider = ({ children }: { children: ReactNode }) => {
+  const [ready, setReady] = useState<boolean>(false);
+
   const [state, dispatch] = useReducer(InputValuesReducer, {});
 
   const inputValueFunctions = {
+    setStore: (data: InputValueStore) =>
+      dispatch({ type: ReducerTypes.SET_STORE, data }),
+
     setInputValues: (data: Array<InputValue>) =>
       dispatch({ type: ReducerTypes.SET_INPUT_VALUES, data }),
 
@@ -153,6 +171,21 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
         [] as Array<string>
       ),
   };
+
+  useEffect(() => {
+    window.onbeforeunload = function () {
+      Cookies.set("inputValues", JSON.stringify(state));
+    };
+
+    if (!ready) {
+      const cookieStringValue = Cookies.get("inputValues");
+      dispatch({
+        type: ReducerTypes.SET_STORE,
+        data: cookieStringValue ? JSON.parse(cookieStringValue) : {},
+      });
+      setReady(true);
+    }
+  });
 
   return (
     <InputValueContext.Provider value={inputValueFunctions}>

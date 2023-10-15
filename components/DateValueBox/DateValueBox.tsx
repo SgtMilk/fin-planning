@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useState } from "react";
 import { InputValue, InputValueKey } from "../../data";
-import { SvgIcon } from "../Base";
+import { CaretIcon, XIcon } from "../Base";
 
 export interface DateValueBoxProps {
   value: InputValue;
@@ -8,7 +10,7 @@ export interface DateValueBoxProps {
   deleteFunction: () => void;
 }
 
-const DateValueBox = ({
+export const DateValueBox = ({
   value,
   updateValue,
   deleteFunction,
@@ -16,9 +18,7 @@ const DateValueBox = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<boolean>(false);
 
-  const updatePage = () => {
-    setTrigger(!trigger);
-  };
+  const updatePage = () => setTrigger(!trigger);
 
   // the inputs and checkboxes of the DateValueBox
   const inputs = [
@@ -64,44 +64,20 @@ const DateValueBox = ({
     },
   ];
 
-  // SVG HERPERS
-  const caretIcon = () => {
-    const props = {
-      handleFunction: () => setIsOpen(!isOpen),
-      component: [
-        <path
-          d={isOpen ? "M18 15l-6-6-6 6" : "M6 9l6 6 6-6"}
-          key="caret icons"
-        />,
-      ],
-    };
-    return <SvgIcon {...props} />;
-  };
-
-  const xIcon = () => {
-    const props = {
-      handleFunction: deleteFunction,
-      component: [
-        <circle cx="12" cy="12" r="10" key="circle"></circle>,
-        <line x1="15" y1="9" x2="9" y2="15" key="x line 1"></line>,
-        <line x1="9" y1="9" x2="15" y2="15" key="x line 2"></line>,
-      ],
-    };
-    return <SvgIcon {...props} />;
-  };
-
   return (
     <div
       className={`${
         isOpen ? "grid grid-cols-2" : "flex flex-row justify-between"
       } gap-6 p-6 bg-white border border-slate-200 rounded-lg shadow dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700 w-96`}
     >
-      {caretIcon()}
+      {/* The titlebar of the box */}
+      <CaretIcon {...{ isOpen, setIsOpen }} />
       {isOpen ? null : <p>{value.Title}</p>}
-      <div className="flex justify-end">{xIcon()}</div>
+      <XIcon {...{ deleteFunction }} />
 
       {isOpen
         ? [
+            // all the inputs
             ...inputs.map(({ label, type, additionalFields }) => (
               <div key={label}>
                 <label
@@ -123,6 +99,8 @@ const DateValueBox = ({
                 />
               </div>
             )),
+
+            // all the checkboxes
             <div className="flex flex-col justify-center" key="checkboxes">
               {checkboxes.map(({ label, onChange, defaultValue }) => (
                 <div className="flex flex-row" key={label}>
@@ -149,5 +127,3 @@ const DateValueBox = ({
     </div>
   );
 };
-
-export default DateValueBox;

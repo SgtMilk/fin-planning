@@ -1,48 +1,65 @@
-import React, { ReactElement, useRef, useState } from "react";
-import ConnectedDateValueBox from "../DateValueBox/ConnectedDateValueBox";
+"use client";
+
+import React, { useEffect, useRef, useState } from "react";
+import { ConnectedDateValueBox } from "../DateValueBox/ConnectedDateValueBox";
 import { useInputValueContext } from "@/data";
-import { DropTarget, SvgIcon } from "../Base";
+import { AddIcon, CaretIcon, DropTarget } from "../Base";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-const BoxScroller = () => {
+export const BoxScroller = () => {
+  const [ready, setReady] = useState<boolean>();
   const { getTypes, addEmptyInputValue } = useInputValueContext();
   const sections = getTypes().sort((a, b) =>
     a.localeCompare(b, undefined, { sensitivity: "case" })
   );
 
   const newCategory = useRef<string>("");
+
   const addCategory = () => {
     if (newCategory.current == "") return;
+
     addEmptyInputValue(newCategory.current);
+
+    // clearing the input
     const input = document.getElementById("newCategoryInput");
     if (input) (input as unknown as { value: string }).value = "";
     newCategory.current = "";
   };
 
+  useEffect(() => {
+    if (!ready) setReady(true);
+  });
+
   return (
-    <div className="bg-slate-100 h-screen">
+    <div className="bg-slate-100 h-screen w-[24.5rem]">
       <DndProvider backend={HTML5Backend}>
-        <div className="px-1 py-5 bg-slate-300">
-          <form
-            className="flex flex-row justify-between align-center w-96 px-6"
-            onSubmit={(e: any) => e.preventDefault()}
-          >
-            <input
-              className="bg-slate-50 border border-slate-300 text-slate-900 mr-6 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-slate-100"
-              type="text"
-              id="newCategoryInput"
-              onChange={(e: any) => {
-                newCategory.current = e.target.value;
-              }}
-            />
-            <button
-              className="bg-cyan-700 hover:bg-cyan-900 text-white font-bold py-2 px-4 rounded whitespace-nowrap"
-              onClick={addCategory}
+        <div className="flex align-center justify-center px-1 py-5 bg-slate-300 h-[5.5rem]">
+          {ready ? (
+            <form
+              className="flex flex-row justify-between align-center w-96 px-6"
+              onSubmit={(e: any) => e.preventDefault()}
             >
-              Add Category
-            </button>
-          </form>
+              <input
+                className="bg-slate-50 border border-slate-300 text-slate-900 mr-6 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-slate-100"
+                type="text"
+                id="newCategoryInput"
+                onChange={(e: any) => {
+                  newCategory.current = e.target.value;
+                }}
+              />
+              <button
+                className="bg-cyan-700 hover:bg-cyan-900 text-white font-bold py-2 px-4 rounded whitespace-nowrap"
+                onClick={addCategory}
+              >
+                Add Category
+              </button>
+            </form>
+          ) : (
+            <p className="flex align-center justify-center font-bold text-lg m-auto">
+              Loading...
+            </p>
+          )}
         </div>
 
         <div className="overflow-y-scroll no-scrollbar h-[calc(100%-5.5rem)]">
@@ -66,39 +83,14 @@ const BoxScrollerSection = ({ title }: BoxScrollerSectionProps) => {
 
   const keys = getInputValueKeysByType(title);
 
-  // SVG HERPERS
-  const caretIcon = () => {
-    const props = {
-      handleFunction: () => setIsOpen(!isOpen),
-      component: [
-        <path
-          d={isOpen ? "M18 15l-6-6-6 6" : "M6 9l6 6 6-6"}
-          key="caret icons"
-        />,
-      ],
-    };
-    return <SvgIcon {...props} />;
-  };
-
-  const addIcon = () => {
-    const props = {
-      handleFunction: () => addEmptyInputValue(title),
-      component: [
-        <line x1="12" y1="5" x2="12" y2="19" key="line1"></line>,
-        <line x1="5" y1="12" x2="19" y2="12" key="line2"></line>,
-      ],
-    };
-    return <SvgIcon {...props} />;
-  };
-
   return (
     <DropTarget type={title}>
       <div className="border border-slate-200">
         <div className="px-1 py-5 text-lg">
           <div className="flex flex-row justify-between w-96 px-6">
-            {caretIcon()}
+            <CaretIcon {...{ isOpen, setIsOpen }} />
             <p>{title}</p>
-            {addIcon()}
+            <AddIcon addFunction={() => addEmptyInputValue(title)} />
           </div>
         </div>
         {isOpen
@@ -112,5 +104,3 @@ const BoxScrollerSection = ({ title }: BoxScrollerSectionProps) => {
     </DropTarget>
   );
 };
-
-export default BoxScroller;

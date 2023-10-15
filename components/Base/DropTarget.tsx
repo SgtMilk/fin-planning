@@ -1,3 +1,5 @@
+"use client";
+
 import { useInputValueContext } from "@/data";
 import { useDrop } from "react-dnd";
 
