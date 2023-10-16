@@ -34,34 +34,47 @@ export const DateValueBox = ({
       type: "month",
       additionalFields: { min: value["Start Date"] },
     },
+    { label: "Contribution Increase", type: "number", additionalFields: {} },
     { label: "APY (%)", type: "number", additionalFields: {} },
   ];
 
   const checkboxes = [
-    {
-      label: "One-Time",
-      onChange: (e: any) => {
-        updateValue("End Date", value["Start Date"]);
-        updatePage();
+    [
+      {
+        label: "One-Time",
+        onChange: (e: any) => {
+          updateValue("End Date", value["Start Date"]);
+          updatePage();
+        },
+        defaultValue: value["Start Date"] == value["End Date"],
       },
-      defaultValue: value["Start Date"] == value["End Date"],
-    },
-    {
-      label: "No End Date",
-      onChange: (e: any) => {
-        updateValue("End Date", "2500-01");
-        updatePage();
+      {
+        label: "No End Date",
+        onChange: (e: any) => {
+          updateValue("End Date", "2500-01");
+          updatePage();
+        },
+        defaultValue: value["End Date"] == "2500-01",
       },
-      defaultValue: value["End Date"] == "2500-01",
-    },
-    {
-      label: "APY = Inflation",
-      onChange: (e: any) => {
-        updateValue("APY (%)", 4);
-        updatePage();
+    ],
+    [
+      {
+        label: "APY = Inflation",
+        onChange: (e: any) => {
+          updateValue("APY (%)", 4);
+          updatePage();
+        },
+        defaultValue: value["APY (%)"] == 4,
       },
-      defaultValue: value["APY (%)"] == 4,
-    },
+      {
+        label: "CI = Inflation",
+        onChange: (e: any) => {
+          updateValue("Contribution Increase", 4);
+          updatePage();
+        },
+        defaultValue: value["Contribution Increase"] == 4,
+      },
+    ],
   ];
 
   return (
@@ -73,7 +86,9 @@ export const DateValueBox = ({
       {/* The titlebar of the box */}
       <CaretIcon {...{ isOpen, setIsOpen }} />
       {isOpen ? null : <p>{value.Title}</p>}
-      <XIcon {...{ deleteFunction }} />
+      <div className="flex justify-end">
+        <XIcon {...{ deleteFunction }} />
+      </div>
 
       {isOpen
         ? [
@@ -101,27 +116,32 @@ export const DateValueBox = ({
             )),
 
             // all the checkboxes
-            <div className="flex flex-col justify-center" key="checkboxes">
-              {checkboxes.map(({ label, onChange, defaultValue }) => (
-                <div className="flex flex-row" key={label}>
-                  <div className="flex items-center">
-                    <input
-                      id={label}
-                      className="w-4 h-4"
-                      type="checkbox"
-                      onChange={onChange}
-                      checked={defaultValue}
-                    />
-                    <label
-                      htmlFor={label}
-                      className="block text-sm font-medium text-slate-900 dark:text-white pl-3"
-                    >
-                      {label}
-                    </label>
+            ...checkboxes.map((block, i) => (
+              <div
+                className="flex flex-col justify-center"
+                key={`chekboxes block ${i}`}
+              >
+                {block.map(({ label, onChange, defaultValue }) => (
+                  <div className="flex flex-row" key={label}>
+                    <div className="flex items-center">
+                      <input
+                        id={label}
+                        className="w-4 h-4"
+                        type="checkbox"
+                        onChange={onChange}
+                        checked={defaultValue}
+                      />
+                      <label
+                        htmlFor={label}
+                        className="block text-sm font-medium text-slate-900 dark:text-white pl-3"
+                      >
+                        {label}
+                      </label>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>,
+                ))}
+              </div>
+            )),
           ]
         : null}
     </div>

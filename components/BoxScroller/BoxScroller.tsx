@@ -9,9 +9,17 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 
 export const BoxScroller = () => {
   const [ready, setReady] = useState<boolean>();
-  const { getTypes, addEmptyInputValue } = useInputValueContext();
+  const { getTypes, addEmptyInputValue, getBalanceSheet } =
+    useInputValueContext();
   const sections = getTypes().sort((a, b) =>
     a.localeCompare(b, undefined, { sensitivity: "case" })
+  );
+
+  console.log(getBalanceSheet("2025-01"));
+  console.log(
+    getBalanceSheet("2025-01").map((elements) =>
+      Object.values(elements).reduce((acc, cur) => acc + cur, 0)
+    )
   );
 
   const newCategory = useRef<string>("");

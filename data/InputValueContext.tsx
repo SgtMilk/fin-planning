@@ -9,12 +9,14 @@ import {
   useState,
 } from "react";
 import Cookies from "js-cookie";
+import { BalanceSheet, getMonthlyBalanceSheet } from "./processingFunctions";
 
 export interface InputValue {
   Title: string;
   "Current Value": number;
   "Start Date": string;
   "End Date": string;
+  "Contribution Increase": number;
   "APY (%)": number;
   Type: string;
 }
@@ -24,6 +26,7 @@ export type InputValueKey =
   | "Current Value"
   | "Start Date"
   | "End Date"
+  | "Contribution Increase"
   | "APY (%)"
   | "Type";
 
@@ -62,6 +65,7 @@ interface ContextFunctions {
   getInputValueKeys: () => Array<string>;
   getInputValueKeysByType: (type: string) => Array<string>;
   getTypes: () => Array<string>;
+  getBalanceSheet: (finalMonth: string) => BalanceSheet;
 }
 
 const InputValueContext = createContext<ContextFunctions>(
@@ -138,6 +142,7 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
         "Current Value": 0,
         "Start Date": curMonth,
         "End Date": curMonth,
+        "Contribution Increase": 4,
         "APY (%)": 4,
         Type: type,
       };
@@ -170,9 +175,12 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
             : [...accumulator, curVal["Type"]],
         [] as Array<string>
       ),
+    getBalanceSheet: (finalMonth: string) =>
+      getMonthlyBalanceSheet(finalMonth, state),
   };
 
   useEffect(() => {
+    // little hack to keep state
     window.onbeforeunload = function () {
       Cookies.set("inputValues", JSON.stringify(state));
     };
