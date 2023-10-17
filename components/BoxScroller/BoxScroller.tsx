@@ -6,6 +6,7 @@ import { useInputValueContext } from "@/data";
 import { AddIcon, CaretIcon, DropTarget } from "../Base";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { getInvestmentBalanceSheet } from "@/data/processingFunctions";
 
 export const BoxScroller = () => {
   const [ready, setReady] = useState<boolean>();
@@ -15,10 +16,13 @@ export const BoxScroller = () => {
     a.localeCompare(b, undefined, { sensitivity: "case" })
   );
 
-  console.log(getBalanceSheet("2025-01"));
+  const balanceSheet = getBalanceSheet("2050-01");
+  const investmentBalanceSheet = getInvestmentBalanceSheet(balanceSheet);
+  console.log(balanceSheet);
+  console.log(investmentBalanceSheet);
   console.log(
-    getBalanceSheet("2025-01").map((elements) =>
-      Object.values(elements).reduce((acc, cur) => acc + cur, 0)
+    investmentBalanceSheet.map((elements) =>
+      Object.values(elements).reduce((arr, cur) => arr + cur.value, 0)
     )
   );
 

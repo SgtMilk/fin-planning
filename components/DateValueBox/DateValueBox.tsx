@@ -15,7 +15,7 @@ export const DateValueBox = ({
   updateValue,
   deleteFunction,
 }: DateValueBoxProps) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(value.Title === "New Value");
   const [trigger, setTrigger] = useState<boolean>(false);
 
   const updatePage = () => setTrigger(!trigger);
@@ -23,7 +23,7 @@ export const DateValueBox = ({
   // the inputs and checkboxes of the DateValueBox
   const inputs = [
     { label: "Title", type: "text", additionalFields: {} },
-    { label: "Current Value", type: "number", additionalFields: {} },
+    { label: "Contribution / Month", type: "number", additionalFields: {} },
     {
       label: "Start Date",
       type: "month",
@@ -34,8 +34,9 @@ export const DateValueBox = ({
       type: "month",
       additionalFields: { min: value["Start Date"] },
     },
-    { label: "Contribution Increase", type: "number", additionalFields: {} },
+    { label: "Contribution IPY (%)", type: "number", additionalFields: {} },
     { label: "APY (%)", type: "number", additionalFields: {} },
+    { label: "Current Value", type: "number", additionalFields: {} },
   ];
 
   const checkboxes = [
@@ -56,26 +57,67 @@ export const DateValueBox = ({
         },
         defaultValue: value["End Date"] == "2500-01",
       },
-    ],
-    [
-      {
-        label: "APY = Inflation",
-        onChange: (e: any) => {
-          updateValue("APY (%)", 4);
-          updatePage();
-        },
-        defaultValue: value["APY (%)"] == 4,
-      },
       {
         label: "CI = Inflation",
         onChange: (e: any) => {
-          updateValue("Contribution Increase", 4);
+          updateValue("Contribution IPY (%)", 4);
           updatePage();
         },
-        defaultValue: value["Contribution Increase"] == 4,
+        defaultValue: value["Contribution IPY (%)"] == 4,
       },
     ],
   ];
+
+  const renderInputs = () =>
+    inputs.map(({ label, type, additionalFields }) => (
+      <div key={label}>
+        <label
+          htmlFor={label}
+          className="block mb-2 text-sm font-medium text-slate-900 dark:text-white"
+        >
+          {label}
+        </label>
+        <input
+          id={label}
+          className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-slate-100"
+          type={type}
+          value={(value as { [key: string]: any })[label]}
+          onChange={(e: any) => {
+            updateValue(label as InputValueKey, e.target.value);
+            updatePage();
+          }}
+          {...additionalFields}
+        />
+      </div>
+    ));
+
+  const renderCheckBoxes = () =>
+    checkboxes.map((block, i) => (
+      <div
+        className="flex flex-col justify-center"
+        key={`chekboxes block ${i}`}
+      >
+        {block.map(({ label, onChange, defaultValue }) => (
+          <div className="flex flex-row" key={label}>
+            <div className="flex items-center">
+              <input
+                id={label}
+                className="w-4 h-4"
+                type="checkbox"
+                onChange={onChange}
+                checked={defaultValue}
+              />
+              <label
+                htmlFor={label}
+                className="block text-sm font-medium text-slate-900 dark:text-white pl-3"
+              >
+                {label}
+              </label>
+            </div>
+          </div>
+        ))}
+      </div>
+    ));
 
   return (
     <div
@@ -93,55 +135,8 @@ export const DateValueBox = ({
       {isOpen
         ? [
             // all the inputs
-            ...inputs.map(({ label, type, additionalFields }) => (
-              <div key={label}>
-                <label
-                  htmlFor={label}
-                  className="block mb-2 text-sm font-medium text-slate-900 dark:text-white"
-                >
-                  {label}
-                </label>
-                <input
-                  id={label}
-                  className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-slate-100"
-                  type={type}
-                  value={(value as { [key: string]: any })[label]}
-                  onChange={(e: any) => {
-                    updateValue(label as InputValueKey, e.target.value);
-                    updatePage();
-                  }}
-                  {...additionalFields}
-                />
-              </div>
-            )),
-
-            // all the checkboxes
-            ...checkboxes.map((block, i) => (
-              <div
-                className="flex flex-col justify-center"
-                key={`chekboxes block ${i}`}
-              >
-                {block.map(({ label, onChange, defaultValue }) => (
-                  <div className="flex flex-row" key={label}>
-                    <div className="flex items-center">
-                      <input
-                        id={label}
-                        className="w-4 h-4"
-                        type="checkbox"
-                        onChange={onChange}
-                        checked={defaultValue}
-                      />
-                      <label
-                        htmlFor={label}
-                        className="block text-sm font-medium text-slate-900 dark:text-white pl-3"
-                      >
-                        {label}
-                      </label>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )),
+            ...renderInputs(),
+            ...renderCheckBoxes(),
           ]
         : null}
     </div>

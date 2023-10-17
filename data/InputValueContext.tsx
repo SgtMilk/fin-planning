@@ -9,14 +9,19 @@ import {
   useState,
 } from "react";
 import Cookies from "js-cookie";
-import { BalanceSheet, getMonthlyBalanceSheet } from "./processingFunctions";
+import {
+  BalanceSheet,
+  getMonthlyBalanceSheet,
+  getNewKey,
+} from "./processingFunctions";
 
 export interface InputValue {
   Title: string;
   "Current Value": number;
+  "Contribution / Month": number;
   "Start Date": string;
   "End Date": string;
-  "Contribution Increase": number;
+  "Contribution IPY (%)": number;
   "APY (%)": number;
   Type: string;
 }
@@ -24,9 +29,10 @@ export interface InputValue {
 export type InputValueKey =
   | "Title"
   | "Current Value"
+  | "Contribution / Month"
   | "Start Date"
   | "End Date"
-  | "Contribution Increase"
+  | "Contribution IPY (%)"
   | "APY (%)"
   | "Type";
 
@@ -74,8 +80,6 @@ const InputValueContext = createContext<ContextFunctions>(
 
 export const useInputValueContext = (): ContextFunctions =>
   useContext(InputValueContext);
-
-const getNewKey = () => Math.random().toString(36).substring(2, 12); // 10 digit key
 
 const InputValuesReducer = (
   state: InputValueStore,
@@ -140,10 +144,11 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
       const emptyInputValue = {
         Title: "New Value",
         "Current Value": 0,
+        "Contribution / Month": 0,
         "Start Date": curMonth,
         "End Date": curMonth,
-        "Contribution Increase": 4,
-        "APY (%)": 4,
+        "Contribution IPY (%)": 4,
+        "APY (%)": 0,
         Type: type,
       };
       dispatch({ type: ReducerTypes.ADD_INPUT_VALUE, data: emptyInputValue });

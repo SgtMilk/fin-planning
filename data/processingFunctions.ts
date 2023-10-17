@@ -1,6 +1,65 @@
 import { InputValueStore } from ".";
 
-export type BalanceSheet = Array<{ [key: string]: number }>;
+export interface BalanceSheetEntry {
+  value: number;
+  isInvestment: boolean;
+  Title: string;
+}
+
+const investmentAPY = Math.pow(1.12, 1 / 12);
+
+export type BalanceSheet = Array<{ [key: string]: BalanceSheetEntry }>;
+
+export const getNewKey = () => Math.random().toString(36).substring(2, 12); // 10 digit key
+
+export const getResultingInvestment = (balanceSheet: BalanceSheet) => {
+  let lastValue = 0;
+  const investmentValues: Array<number> = [];
+
+  let lastNonInvestmentBalance = 0;
+
+  balanceSheet.forEach((elements) => {
+    const nonInvestmentBalance = Object.values(elements).reduce(
+      (acc, cur) => (cur.isInvestment ? acc : acc + cur.value),
+      0
+    );
+
+    lastValue =
+      lastValue * investmentAPY +
+      nonInvestmentBalance -
+      lastNonInvestmentBalance;
+    lastNonInvestmentBalance = nonInvestmentBalance;
+
+    investmentValues.push(lastValue);
+  });
+
+  return investmentValues;
+};
+
+export const getInvestmentBalanceSheet = (
+  balanceSheet: BalanceSheet
+): BalanceSheet => {
+  const resultingInvestment = getResultingInvestment(balanceSheet);
+
+  const investmentBalanceSheet = balanceSheet.map((elements, i) => {
+    const investmentElements: { [key: string]: BalanceSheetEntry } = {};
+
+    Object.entries(elements).forEach(
+      ([key, value]: [string, BalanceSheetEntry]) => {
+        if (value.isInvestment) investmentElements[key] = value;
+      }
+    );
+
+    investmentElements[getNewKey()] = {
+      value: resultingInvestment[i],
+      isInvestment: true,
+      Title: "Resulting Investment",
+    };
+    return investmentElements;
+  });
+
+  return investmentBalanceSheet;
+};
 
 export const getMonthlyBalanceSheet = (
   finalMonth: string,
@@ -25,7 +84,7 @@ export const getMonthlyBalanceSheet = (
     finalMonth
   );
 
-  const balanceSheet = Array(numMonths)
+  const balanceSheet: BalanceSheet = Array(numMonths)
     .fill(undefined)
     .map(() => ({}));
 
@@ -40,17 +99,21 @@ export const getMonthlyBalanceSheet = (
 
     const [apm, cim] = [
       element["APY (%)"],
-      element["Contribution Increase"],
+      element["Contribution IPY (%)"],
     ].map((num) => Math.pow(num / 100 + 1, 1 / 12));
 
-    let lastValue = 0;
+    let lastValue = element["Current Value"];
     for (let i = 0; i < totalNumMonths; i++) {
       const contribution =
         i < elementNumMonths
-          ? element["Current Value"] * Math.pow(cim, i + 1)
+          ? element["Contribution / Month"] * Math.pow(cim, i + 1)
           : 0;
       lastValue = lastValue * apm + contribution;
-      balanceSheet[i + initialIndex][element.Title] = lastValue;
+      balanceSheet[i + initialIndex][key] = {
+        value: lastValue,
+        isInvestment: element["APY (%)"] != 0,
+        Title: element.Title,
+      };
     }
   });
 

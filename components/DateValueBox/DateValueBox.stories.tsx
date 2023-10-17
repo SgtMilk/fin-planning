@@ -37,10 +37,11 @@ const Child = () => {
   const { setInputValues, getInputValueKeys } = useInputValueContext();
   const value: InputValue = {
     Title: "Groceries",
-    "Current Value": 3,
+    "Current Value": 300,
+    "Contribution / Month": 5,
     "Start Date": "2023-06",
     "End Date": "2024-06",
-    "Contribution Increase": 5,
+    "Contribution IPY (%)": 5,
     "APY (%)": 5,
     Type: "beep",
   };
