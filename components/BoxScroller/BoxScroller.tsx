@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ConnectedDateValueBox } from "../DateValueBox/ConnectedDateValueBox";
 import { useInputValueContext } from "@/data";
-import { AddIcon, CaretIcon, DropTarget } from "../Base";
+import { AddIcon, CaretIcon, DropTarget, EditIcon } from "../Base";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { getInvestmentBalanceSheet } from "@/data/processingFunctions";
@@ -90,19 +90,53 @@ interface BoxScrollerSectionProps {
 
 const BoxScrollerSection = ({ title }: BoxScrollerSectionProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  const { getInputValueKeysByType, addEmptyInputValue } =
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const titleRef = useRef<string>(title);
+  const { getInputValueKeysByType, addEmptyInputValue, editSectionTitle } =
     useInputValueContext();
 
   const keys = getInputValueKeysByType(title);
+
+  const editFunction = () => {
+    setIsEdit(!isEdit);
+    if (isEdit) editSectionTitle(title, titleRef.current);
+  };
 
   return (
     <DropTarget type={title}>
       <div className="border border-slate-200">
         <div className="px-1 py-5 text-lg">
           <div className="flex flex-row justify-between w-96 px-6">
-            <CaretIcon {...{ isOpen, setIsOpen }} />
-            <p>{title}</p>
-            <AddIcon addFunction={() => addEmptyInputValue(title)} />
+            <div className="w-10">
+              <CaretIcon {...{ isOpen, setIsOpen }} />
+            </div>
+
+            <form
+              className="h-7 overflow-none"
+              onSubmit={(e: any) => {
+                editFunction();
+                return e.preventDefault();
+              }}
+            >
+              {isEdit ? (
+                <input
+                  defaultValue={title}
+                  className="text-center"
+                  onChange={(e: any) => {
+                    titleRef.current = e.target.value;
+                  }}
+                />
+              ) : (
+                <p>{title}</p>
+              )}
+            </form>
+
+            <div className="flex flex-row">
+              <div className={`pr-3${isEdit ? " mt-1" : ""}`}>
+                <EditIcon isEdit={isEdit} editFunction={editFunction} />
+              </div>
+              <AddIcon addFunction={() => addEmptyInputValue(title)} />
+            </div>
           </div>
         </div>
         {isOpen

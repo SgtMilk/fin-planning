@@ -2,7 +2,7 @@ import React from "react";
 
 export interface SvgIconProps {
   handleFunction: () => void;
-  component: Array<React.ReactElement>;
+  component: React.ReactNode;
 }
 
 export const CaretIcon = ({
@@ -47,10 +47,30 @@ export const AddIcon = ({ addFunction }: { addFunction: () => void }) => {
   return <SvgIcon {...props} />;
 };
 
-const SvgIcon = ({ handleFunction, component }: SvgIconProps) => (
+export const EditIcon = ({
+  isEdit,
+  editFunction,
+}: {
+  isEdit: boolean;
+  editFunction: () => void;
+}) => {
+  const props = {
+    handleFunction: editFunction,
+    component: [
+      isEdit ? (
+        <polyline points="20 6 9 17 4 12" key="check"></polyline>
+      ) : (
+        <polygon points="16,3 21,8 8,21 3,21 3,16 16,3" key="pencil"></polygon>
+      ),
+    ],
+  };
+  return <SvgIcon {...props} />;
+};
+
+export const SvgIcon = ({ handleFunction, component }: SvgIconProps) => (
   <button onClick={handleFunction}>
     <svg
-      className="w-5 h-5 dark:text-white stroke-slate-900"
+      className="flex align-center justify-center w-5 h-5 dark:text-white stroke-slate-900"
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"

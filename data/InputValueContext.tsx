@@ -46,6 +46,7 @@ enum ReducerTypes {
   ADD_INPUT_VALUE,
   MODIFY_INPUT_VALUE,
   DELETE_INPUT_VALUE,
+  EDIT_SECTION_TITLE,
 }
 
 interface InputValueAction {
@@ -67,6 +68,7 @@ interface ContextFunctions {
     value: string | number
   ) => void;
   deleteInputValue: (id: string) => void;
+  editSectionTitle: (oldValue: string, newValue: string) => void;
   getInputValue: (id: string) => InputValue;
   getInputValueKeys: () => Array<string>;
   getInputValueKeysByType: (type: string) => Array<string>;
@@ -116,6 +118,13 @@ const InputValuesReducer = (
       }
       return state;
 
+    case ReducerTypes.EDIT_SECTION_TITLE:
+      for (let key in state) {
+        if (state[key].Type === action.data.oldValue)
+          state[key].Type = action.data.newValue;
+      }
+      return { ...state };
+
     default:
       return state;
   }
@@ -156,6 +165,12 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
 
     deleteInputValue: (id: string) =>
       dispatch({ type: ReducerTypes.DELETE_INPUT_VALUE, data: id }),
+
+    editSectionTitle: (oldValue: string, newValue: string) =>
+      dispatch({
+        type: ReducerTypes.EDIT_SECTION_TITLE,
+        data: { oldValue, newValue },
+      }),
 
     modifyInputValue: (id: string, key: string, value: string | number) =>
       dispatch({
