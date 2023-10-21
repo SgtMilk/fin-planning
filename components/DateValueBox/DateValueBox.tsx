@@ -6,7 +6,7 @@ import { CaretIcon, XIcon } from "../Base";
 
 export interface DateValueBoxProps {
   value: InputValue;
-  updateValue: (key: InputValueKey, value: string | number) => void;
+  updateValue: (key: InputValueKey, value: string | number | boolean) => void;
   deleteFunction: () => void;
 }
 
@@ -64,6 +64,14 @@ export const DateValueBox = ({
           updatePage();
         },
         defaultValue: value["Contribution IPY (%)"] == 4,
+      },
+      {
+        label: "Taxed CG",
+        onChange: (e: any) => {
+          updateValue("Taxed CG", !value["Taxed CG"]);
+          updatePage();
+        },
+        defaultValue: value["Taxed CG"],
       },
     ],
   ];

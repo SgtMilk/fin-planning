@@ -15,7 +15,7 @@ export const ConnectedDateValueBox = ({ id }: ConnectedDateValueBoxProps) => {
 
   if (!id) return null;
 
-  const updateValue = (key: InputValueKey, value: string | number) =>
+  const updateValue = (key: InputValueKey, value: string | number | boolean) =>
     modifyInputValue(id, key, value);
 
   const deleteFunction = () => deleteInputValue(id);

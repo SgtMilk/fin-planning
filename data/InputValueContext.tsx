@@ -24,6 +24,7 @@ export interface InputValue {
   "Contribution IPY (%)": number;
   "APY (%)": number;
   Type: string;
+  "Taxed CG": boolean;
 }
 
 export type InputValueKey =
@@ -34,6 +35,7 @@ export type InputValueKey =
   | "End Date"
   | "Contribution IPY (%)"
   | "APY (%)"
+  | "Taxed CG"
   | "Type";
 
 export interface InputValueStore {
@@ -65,7 +67,7 @@ interface ContextFunctions {
   modifyInputValue: (
     id: string,
     key: InputValueKey,
-    value: string | number
+    value: string | number | boolean
   ) => void;
   deleteInputValue: (id: string) => void;
   editSectionTitle: (oldValue: string, newValue: string) => void;
@@ -159,6 +161,7 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
         "Contribution IPY (%)": 4,
         "APY (%)": 0,
         Type: type,
+        "Taxed CG": false,
       };
       dispatch({ type: ReducerTypes.ADD_INPUT_VALUE, data: emptyInputValue });
     },
@@ -172,7 +175,11 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
         data: { oldValue, newValue },
       }),
 
-    modifyInputValue: (id: string, key: string, value: string | number) =>
+    modifyInputValue: (
+      id: string,
+      key: string,
+      value: string | number | boolean
+    ) =>
       dispatch({
         type: ReducerTypes.MODIFY_INPUT_VALUE,
         data: { id, key, value },

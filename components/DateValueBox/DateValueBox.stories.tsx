@@ -2,15 +2,16 @@ import type { Meta } from "@storybook/react";
 
 import {
   InputValue,
+  InputValueKey,
   InputValueProvider,
   useInputValueContext,
 } from "../../data";
-import { ConnectedDateValueBox } from "./ConnectedDateValueBox";
+import { DateValueBox } from "./DateValueBox";
 import { useEffect, useState } from "react";
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta = {
-  title: "Components/ConnectedDateValueBox",
-  component: ConnectedDateValueBox,
+  title: "Components/DateValueBox",
+  component: DateValueBox,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/react/configure/story-layout
     layout: "centered",
@@ -19,23 +20,12 @@ const meta = {
   tags: ["autodocs"],
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {},
-} satisfies Meta<typeof ConnectedDateValueBox>;
+} satisfies Meta<typeof DateValueBox>;
 
 export default meta;
 
 export const Default = () => {
-  return (
-    <InputValueProvider>
-      <Child />
-    </InputValueProvider>
-  );
-};
-
-const Child = () => {
-  const [isReady, setIsReady] = useState<boolean>(false);
-
-  const { setInputValues, getInputValueKeys } = useInputValueContext();
-  const value: InputValue = {
+  const initial: InputValue = {
     Title: "Groceries",
     "Current Value": 300,
     "Contribution / Month": 5,
@@ -44,16 +34,15 @@ const Child = () => {
     "Contribution IPY (%)": 5,
     "APY (%)": 5,
     Type: "beep",
+    "Taxed CG": false,
   };
 
-  useEffect(() => {
-    if (!isReady) {
-      setInputValues([value]);
-      setIsReady(true);
-    }
-  });
+  const [data, setData] = useState<InputValue>(initial);
 
-  return isReady ? (
-    <ConnectedDateValueBox {...{ id: getInputValueKeys()[0] }} />
-  ) : null;
+  const updateValue = (key: InputValueKey, value: string | number | boolean) =>
+    setData({ ...data, [key]: value });
+
+  return (
+    <DateValueBox {...{ value: data, updateValue, deleteFunction: () => {} }} />
+  );
 };

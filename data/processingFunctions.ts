@@ -3,6 +3,7 @@ import { InputValueStore } from ".";
 export interface BalanceSheetEntry {
   value: number;
   isInvestment: boolean;
+  taxedCG: boolean;
   Title: string;
 }
 
@@ -53,6 +54,7 @@ export const getInvestmentBalanceSheet = (
     investmentElements[getNewKey()] = {
       value: resultingInvestment[i],
       isInvestment: true,
+      taxedCG: true,
       Title: "Resulting Investment",
     };
     return investmentElements;
@@ -112,6 +114,7 @@ export const getMonthlyBalanceSheet = (
       balanceSheet[i + initialIndex][key] = {
         value: lastValue,
         isInvestment: element["APY (%)"] != 0,
+        taxedCG: element["Taxed CG"],
         Title: element.Title,
       };
     }

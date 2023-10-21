@@ -6,24 +6,12 @@ import { useInputValueContext } from "@/data";
 import { AddIcon, CaretIcon, DropTarget, EditIcon } from "../Base";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { getInvestmentBalanceSheet } from "@/data/processingFunctions";
 
 export const BoxScroller = () => {
   const [ready, setReady] = useState<boolean>();
-  const { getTypes, addEmptyInputValue, getBalanceSheet } =
-    useInputValueContext();
+  const { getTypes, addEmptyInputValue } = useInputValueContext();
   const sections = getTypes().sort((a, b) =>
     a.localeCompare(b, undefined, { sensitivity: "case" })
-  );
-
-  const balanceSheet = getBalanceSheet("2050-01");
-  const investmentBalanceSheet = getInvestmentBalanceSheet(balanceSheet);
-  console.log(balanceSheet);
-  console.log(investmentBalanceSheet);
-  console.log(
-    investmentBalanceSheet.map((elements) =>
-      Object.values(elements).reduce((arr, cur) => arr + cur.value, 0)
-    )
   );
 
   const newCategory = useRef<string>("");
