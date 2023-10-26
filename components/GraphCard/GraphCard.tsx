@@ -30,6 +30,12 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
     });
   });
 
+  data.forEach((periodData) => {
+    for (const key in periodData)
+      if (key !== "name")
+        periodData[key] = Math.round((periodData[key] as number) * 100) / 100;
+  });
+
   const Graph = () => (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data}>

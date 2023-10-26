@@ -7,7 +7,7 @@ export interface BalanceSheetEntry {
   Title: string;
 }
 
-const investmentAPY = Math.pow(1.12, 1 / 12);
+const investmentAPY = 1;
 
 export type BalanceSheet = Array<{ [key: string]: BalanceSheetEntry }>;
 
