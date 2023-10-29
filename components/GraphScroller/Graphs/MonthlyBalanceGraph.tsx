@@ -1,31 +1,14 @@
-import {
-  BalanceSheet,
-  getResultingInvestment,
-} from "@/data/processingFunctions";
+import { useGetResultingBalance } from "@/data/processingFunctions";
 import React from "react";
-import { GraphProps, processBalanceSheet, reduceData } from "./utils";
+import { processBalanceSheet, reduceData } from "./utils";
 import { GraphCard, LineProps } from "@/components/GraphCard";
+import { useOptionContext } from "@/data";
 
-export const MonthlyBalanceGraph = ({ balanceSheet }: GraphProps) => {
-  const resultingInvestment = getResultingInvestment(balanceSheet);
+export const MonthlyBalanceGraph = () => {
+  const { getOption } = useOptionContext();
+  const { balanceSheet } = useGetResultingBalance(getOption("Last Month"));
 
-  const monthlyBalance = balanceSheet.map((mb, i) => {
-    const monthlyEntries = Object.entries(mb).filter(
-      ([_, value]) => !value.isInvestment
-    );
-    monthlyEntries.push([
-      "x",
-      {
-        value: resultingInvestment[i],
-        isInvestment: false,
-        taxedCG: false,
-        Title: "Resulting Balance",
-      },
-    ]);
-    return Object.fromEntries(monthlyEntries);
-  });
-
-  const data = processBalanceSheet(monthlyBalance);
+  const data = processBalanceSheet(balanceSheet);
 
   const reducedData: LineProps[] = reduceData(data);
 

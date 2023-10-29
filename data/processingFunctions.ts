@@ -1,74 +1,72 @@
-import { InputValueStore } from ".";
+import { InputValueStore, useInputValueContext, useOptionContext } from ".";
 
 export interface BalanceSheetEntry {
   value: number;
-  isInvestment: boolean;
-  taxedCG: boolean;
   Title: string;
 }
-
-const investmentAPY = 1;
 
 export type BalanceSheet = Array<{ [key: string]: BalanceSheetEntry }>;
 
 export const getNewKey = () => Math.random().toString(36).substring(2, 12); // 10 digit key
 
-export const getResultingInvestment = (balanceSheet: BalanceSheet) => {
+export const useGetResultingBalance = (finalMonth: string) => {
+  const { getBalanceSheet } = useInputValueContext();
+  const balanceSheet = getBalanceSheet(finalMonth);
+
   let lastValue = 0;
-  const investmentValues: Array<number> = [];
+  const resultingBalance: Array<number> = [];
 
   let lastNonInvestmentBalance = 0;
 
   balanceSheet.forEach((elements) => {
     const nonInvestmentBalance = Object.values(elements).reduce(
-      (acc, cur) => (cur.isInvestment ? acc : acc + cur.value),
+      (acc, cur) => acc + cur.value,
       0
     );
 
-    lastValue =
-      lastValue * investmentAPY +
-      nonInvestmentBalance -
-      lastNonInvestmentBalance;
+    lastValue = lastValue + nonInvestmentBalance - lastNonInvestmentBalance;
     lastNonInvestmentBalance = nonInvestmentBalance;
 
-    investmentValues.push(lastValue);
+    resultingBalance.push(lastValue);
   });
 
-  return investmentValues;
-};
-
-export const getInvestmentBalanceSheet = (
-  balanceSheet: BalanceSheet
-): BalanceSheet => {
-  const resultingInvestment = getResultingInvestment(balanceSheet);
-
-  const investmentBalanceSheet = balanceSheet.map((elements, i) => {
-    const investmentElements: { [key: string]: BalanceSheetEntry } = {};
-
-    Object.entries(elements).forEach(
-      ([key, value]: [string, BalanceSheetEntry]) => {
-        if (value.isInvestment) investmentElements[key] = value;
-      }
-    );
-
-    investmentElements[getNewKey()] = {
-      value: resultingInvestment[i],
-      isInvestment: true,
-      taxedCG: true,
-      Title: "Resulting Investment",
-    };
-    return investmentElements;
+  const monthlyBalance = balanceSheet.map((mb, i) => {
+    const monthlyEntries = Object.entries(mb);
+    monthlyEntries.push([
+      "x",
+      {
+        value: resultingBalance[i],
+        Title: "Resulting Balance",
+      },
+    ]);
+    return Object.fromEntries(monthlyEntries);
   });
 
-  return investmentBalanceSheet;
+  return { balanceSheet: monthlyBalance, resultingBalance };
 };
 
-export const getMonthlyBalanceSheet = (
-  finalMonth: string,
-  state: InputValueStore
+export const useGetInvestmentBalanceSheet = (
+  finalMonth: string
 ): BalanceSheet => {
+  const { getBalance } = useOptionContext();
+  const { state } = useInputValueContext();
+  const [positiveBalance, negativeBalance] = [true, false].map((arg) =>
+    getBalance(arg)
+  );
+  const { resultingBalance } = useGetResultingBalance(finalMonth);
+
+  // fixing resulting investment so that it's not accumulative
+  for (let i = resultingBalance.length - 1; i >= 1; i--) {
+    resultingBalance[i] = resultingBalance[i] - resultingBalance[i - 1];
+  }
+
+  // removing non-investments
+  const newState: InputValueStore = {};
+  for (const key in state)
+    if (state[key]["APY (%)"] != 0) newState[key] = state[key];
+
   const bigValue = "2500-01";
-  let initialMonth = Object.values(state).reduce(
+  let initialMonth = Object.values(newState).reduce(
     (acc, cur) =>
       cur["Start Date"].localeCompare(acc) < 0 ? cur["Start Date"] : acc,
     bigValue
@@ -90,14 +88,94 @@ export const getMonthlyBalanceSheet = (
     .fill(undefined)
     .map(() => ({}));
 
-  Object.entries(state).forEach(([key, element]) => {
+  Object.entries(newState).forEach(([key, element]) => {
     const [elementInitialDate, _, elementNumMonths] = findDateValues(
       element["Start Date"],
       element["End Date"]
     );
 
     const totalNumMonths = findNumMonths(elementInitialDate, finalDate) + 1;
-    const initialIndex = findNumMonths(elementInitialDate, initialDate);
+    const initialIndex = findNumMonths(initialDate, elementInitialDate);
+
+    const [apm, cim] = [
+      element["APY (%)"],
+      element["Contribution IPY (%)"],
+    ].map((num) => Math.pow(num / 100 + 1, 1 / 12));
+
+    let lastValue = element["Current Value"];
+    for (let i = 0; i < totalNumMonths; i++) {
+      const mri = resultingBalance[i + initialIndex];
+      const balanceContribution =
+        ((mri >= 0 ? positiveBalance[key] : negativeBalance[key]) / 100) * mri;
+
+      const contribution =
+        (i < elementNumMonths
+          ? element["Contribution / Month"] * Math.pow(cim, i + 1)
+          : 0) + balanceContribution;
+
+      lastValue = lastValue * apm + contribution;
+      balanceSheet[i + initialIndex][key] = {
+        value: lastValue,
+        Title: element.Title,
+      };
+    }
+  });
+
+  const balanceSheetWithTotal = balanceSheet.map((mb, i) => {
+    const monthlyEntries = Object.entries(mb);
+    monthlyEntries.push([
+      "x",
+      {
+        value: monthlyEntries.reduce((acc, cur) => acc + cur[1].value, 0),
+        Title: "Total",
+      },
+    ]);
+    return Object.fromEntries(monthlyEntries);
+  });
+
+  return balanceSheetWithTotal;
+};
+
+export const getMonthlyBalanceSheet = (
+  finalMonth: string,
+  state: InputValueStore
+): BalanceSheet => {
+  // removing investments
+  const newState: InputValueStore = {};
+  for (const key in state)
+    if (state[key]["APY (%)"] == 0) newState[key] = state[key];
+
+  const bigValue = "2500-01";
+  let initialMonth = Object.values(newState).reduce(
+    (acc, cur) =>
+      cur["Start Date"].localeCompare(acc) < 0 ? cur["Start Date"] : acc,
+    bigValue
+  );
+
+  if (initialMonth === bigValue) {
+    const curDate = new Date();
+    initialMonth = `${curDate.getFullYear()}-${
+      curDate.getMonth() < 10 ? "0" : ""
+    }${curDate.getMonth()}`;
+  }
+
+  const [initialDate, finalDate, numMonths] = findDateValues(
+    initialMonth,
+    finalMonth
+  );
+
+  const balanceSheet: BalanceSheet = Array(numMonths)
+    .fill(undefined)
+    .map(() => ({}));
+
+  Object.entries(newState).forEach(([key, element]) => {
+    const [elementInitialDate, _, elementNumMonths] = findDateValues(
+      element["Start Date"],
+      element["End Date"]
+    );
+
+    const totalNumMonths = findNumMonths(elementInitialDate, finalDate) + 1;
+    const initialIndex = findNumMonths(initialDate, elementInitialDate);
 
     const [apm, cim] = [
       element["APY (%)"],
@@ -113,13 +191,10 @@ export const getMonthlyBalanceSheet = (
       lastValue = lastValue * apm + contribution;
       balanceSheet[i + initialIndex][key] = {
         value: lastValue,
-        isInvestment: element["APY (%)"] != 0,
-        taxedCG: element["Taxed CG"],
         Title: element.Title,
       };
     }
   });
-
   return balanceSheet;
 };
 

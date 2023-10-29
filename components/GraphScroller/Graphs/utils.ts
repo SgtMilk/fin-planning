@@ -11,7 +11,7 @@ export const reduceData = (data: LineProps[], isSum: boolean = true) => {
     const month = isSum ? curDate.getMonth() : (curDate.getMonth() - 1) % 12;
     data = data.reduce(
       (acc: LineProps[], cur) =>
-        Number(cur.name.split("-")[0]) === month ? [...acc, cur] : acc,
+        Number(cur.name.split("-")[1]) === month ? [...acc, cur] : acc,
       []
     );
   }
@@ -26,10 +26,11 @@ export const processBalanceSheet = (
   const curYear = curDate.getFullYear();
 
   return balanceSheet.map((monthlyBalanceSheet, i) => {
+    const month = (curMonth + i) % 12;
     const processed: { name: string; [key: string]: number | string } = {
-      name: `${(curMonth + i) % 12}-${
-        curYear + Math.floor((curMonth + i) / 12)
-      }`,
+      name: `${curYear + Math.floor((curMonth + i) / 12)}-${
+        month < 10 ? "0" : ""
+      }${month}`,
     };
 
     Object.values(monthlyBalanceSheet).forEach((investment) => {

@@ -1,8 +1,10 @@
 import React from "react";
 
 export interface SvgIconProps {
-  handleFunction: () => void;
+  handleFunction?: () => void;
   component: React.ReactNode;
+  isButton?: boolean;
+  isDark?: boolean;
 }
 
 export const CaretIcon = ({
@@ -67,20 +69,50 @@ export const EditIcon = ({
   return <SvgIcon {...props} />;
 };
 
-export const SvgIcon = ({ handleFunction, component }: SvgIconProps) => (
-  <button onClick={handleFunction}>
-    <svg
-      className="flex align-center justify-center w-5 h-5 dark:text-white stroke-slate-900"
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {component}
-    </svg>
-  </button>
-);
+export const MenuIcon = () => {
+  const props = {
+    handleFunction: () => {},
+    component: [
+      <line x1="3" y1="12" x2="21" y2="12" key="line-1"></line>,
+      <line x1="3" y1="6" x2="21" y2="6" key="line-2"></line>,
+      <line x1="3" y1="18" x2="21" y2="18" key="line-3"></line>,
+    ],
+    isButton: false,
+    isDark: false,
+  };
+  return <SvgIcon {...props} />;
+};
+
+export const SvgIcon = ({
+  handleFunction = () => {},
+  component,
+  isButton = true,
+  isDark = true,
+}: SvgIconProps) => {
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    isButton ? (
+      <button onClick={handleFunction}>{children}</button>
+    ) : (
+      <div>{children}</div>
+    );
+  return (
+    <Wrapper>
+      <svg
+        className={`flex align-center justify-center w-5 h-5 dark:text-white stroke-${
+          isDark ? "slate-900" : "white"
+        }`}
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="white"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {component}
+      </svg>
+    </Wrapper>
+  );
+};

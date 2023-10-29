@@ -32,7 +32,7 @@ export const BoxScroller = () => {
   });
 
   return (
-    <div className="bg-slate-100 h-screen w-[24.5rem]">
+    <div className="bg-slate-100 h-full w-[24.5rem]">
       <DndProvider backend={HTML5Backend}>
         <div className="flex align-center justify-center px-1 py-5 bg-slate-300 h-[5.5rem]">
           {ready ? (

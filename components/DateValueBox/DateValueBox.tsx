@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { InputValue, InputValueKey } from "../../data";
+import { InputValue, InputValueKey, useOptionContext } from "../../data";
 import { CaretIcon, XIcon } from "../Base";
 
 export interface DateValueBoxProps {
@@ -17,6 +17,9 @@ export const DateValueBox = ({
 }: DateValueBoxProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(value.Title === "New Value");
   const [trigger, setTrigger] = useState<boolean>(false);
+
+  const { getOption } = useOptionContext();
+  const inflation = getOption("Inflation");
 
   const updatePage = () => setTrigger(!trigger);
 
@@ -60,10 +63,10 @@ export const DateValueBox = ({
       {
         label: "CI = Inflation",
         onChange: (e: any) => {
-          updateValue("Contribution IPY (%)", 4);
+          updateValue("Contribution IPY (%)", inflation);
           updatePage();
         },
-        defaultValue: value["Contribution IPY (%)"] == 4,
+        defaultValue: value["Contribution IPY (%)"] == inflation,
       },
       {
         label: "Taxed CG",

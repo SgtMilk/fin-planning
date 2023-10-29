@@ -1,0 +1,15 @@
+{
+  "Balance": {
+    "squdqt19yy": "1",
+    "gmyjqs4dru": ""
+  },
+  "Balance-Positive": {
+    "gmyjqs4dru": 75,
+    "squdqt19yy": 25
+  },
+  "Balance-Negative": {
+    "gmyjqs4dru": 75,
+    "squdqt19yy": 25
+  },
+  "Inflation": "5"
+}

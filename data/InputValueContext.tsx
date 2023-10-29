@@ -15,6 +15,8 @@ import {
   getNewKey,
 } from "./processingFunctions";
 
+import template from "./exampleInputValues.json";
+
 export interface InputValue {
   Title: string;
   "Current Value": number;
@@ -47,6 +49,7 @@ enum ReducerTypes {
   SET_INPUT_VALUES,
   ADD_INPUT_VALUE,
   MODIFY_INPUT_VALUE,
+  MODIFY_INFLATION,
   DELETE_INPUT_VALUE,
   EDIT_SECTION_TITLE,
 }
@@ -69,13 +72,16 @@ interface ContextFunctions {
     key: InputValueKey,
     value: string | number | boolean
   ) => void;
+  modifyInflation: (oldValue: number, newValue: number) => void;
   deleteInputValue: (id: string) => void;
   editSectionTitle: (oldValue: string, newValue: string) => void;
   getInputValue: (id: string) => InputValue;
   getInputValueKeys: () => Array<string>;
   getInputValueKeysByType: (type: string) => Array<string>;
+  getInvestmentInputValueKeys: () => Array<string>;
   getTypes: () => Array<string>;
   getBalanceSheet: (finalMonth: string) => BalanceSheet;
+  state: InputValueStore;
 }
 
 const InputValueContext = createContext<ContextFunctions>(
@@ -112,6 +118,14 @@ const InputValuesReducer = (
         return { ...state };
       }
       return state;
+
+    case ReducerTypes.MODIFY_INFLATION:
+      const { oldValue, newValue } = action.data;
+      for (let key in state) {
+        if (state[key]["Contribution IPY (%)"] == oldValue)
+          state[key]["Contribution IPY (%)"] = newValue;
+      }
+      return { ...state };
 
     case ReducerTypes.DELETE_INPUT_VALUE:
       if (action.data in state) {
@@ -185,6 +199,13 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
         data: { id, key, value },
       }),
 
+    modifyInflation: (oldValue: number, newValue: number) => {
+      dispatch({
+        type: ReducerTypes.MODIFY_INFLATION,
+        data: { oldValue, newValue },
+      });
+    },
+
     getInputValue: (id: string) => state[id],
 
     getInputValueKeys: () => Object.keys(state),
@@ -192,6 +213,11 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
     getInputValueKeysByType: (type: string) =>
       Object.entries(state)
         .filter(([_, value]) => value["Type"] == type)
+        .map((entry) => entry[0]),
+
+    getInvestmentInputValueKeys: () =>
+      Object.entries(state)
+        .filter(([_, value]) => value["APY (%)"] !== 0)
         .map((entry) => entry[0]),
 
     getTypes: () =>
@@ -204,6 +230,8 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
       ),
     getBalanceSheet: (finalMonth: string) =>
       getMonthlyBalanceSheet(finalMonth, state),
+
+    state,
   };
 
   useEffect(() => {
@@ -213,7 +241,9 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
     };
 
     if (!ready) {
-      const cookieStringValue = Cookies.get("inputValues");
+      let cookieStringValue = Cookies.get("inputValues");
+      if (!cookieStringValue || cookieStringValue === "{}")
+        cookieStringValue = JSON.stringify(template);
       dispatch({
         type: ReducerTypes.SET_STORE,
         data: cookieStringValue ? JSON.parse(cookieStringValue) : {},
