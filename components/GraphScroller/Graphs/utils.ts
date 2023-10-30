@@ -1,20 +1,21 @@
 import { LineProps } from "@/components/GraphCard";
+import { useOptionContext } from "@/data";
 import { BalanceSheet } from "@/data/processingFunctions";
 
 export interface GraphProps {
   balanceSheet: BalanceSheet;
 }
 
-export const reduceData = (data: LineProps[], isSum: boolean = true) => {
-  if (data.length > 25) {
-    const curDate = new Date();
-    const month = isSum ? curDate.getMonth() : (curDate.getMonth() - 1) % 12;
-    data = data.reduce(
-      (acc: LineProps[], cur) =>
-        Number(cur.name.split("-")[1]) === month ? [...acc, cur] : acc,
-      []
-    );
-  }
+export const useReduceData = (data: LineProps[], isSum: boolean = true) => {
+  const { getOption } = useOptionContext();
+
+  const interval = getOption("Month Interval");
+
+  data = data.reduce(
+    (acc: LineProps[], cur, i) => (i % interval === 0 ? [...acc, cur] : acc),
+    []
+  );
+
   return data;
 };
 

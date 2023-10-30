@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { CaretIcon, MenuIcon } from "..";
+import { CaretIcon, MenuIcon } from "../Base";
 import {
   ConnectedSingleOptionInput,
   ResultingBalanceOptionInput,
@@ -31,6 +31,7 @@ export const OptionsPanel = () => {
           </OptionsPanelSection>
           <OptionsPanelSection title="Graph">
             <div>
+              <ConnectedSingleOptionInput label="Month Interval" />
               <ConnectedSingleOptionInput label="First Month" />
               <ConnectedSingleOptionInput label="Last Month" />
             </div>

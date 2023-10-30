@@ -9,27 +9,34 @@ export type BalanceSheet = Array<{ [key: string]: BalanceSheetEntry }>;
 
 export const getNewKey = () => Math.random().toString(36).substring(2, 12); // 10 digit key
 
-export const useGetResultingBalance = (finalMonth: string) => {
-  const { getBalanceSheet } = useInputValueContext();
-  const balanceSheet = getBalanceSheet(finalMonth);
+export const useGetResultingBalanceSheet = (finalMonth: string) => {
+  const { state } = useInputValueContext();
 
+  // removing investments
+  const newState: InputValueStore = {};
+  for (const key in state)
+    if (state[key]["APY (%)"] == 0) newState[key] = state[key];
+
+  const balanceSheet = inputValuesToBalanceSheet(newState, finalMonth, () => 0);
+
+  // calculting resulting balance
   let lastValue = 0;
+  let lastNonInvestmentBalance = 0;
   const resultingBalance: Array<number> = [];
 
-  let lastNonInvestmentBalance = 0;
-
   balanceSheet.forEach((elements) => {
-    const nonInvestmentBalance = Object.values(elements).reduce(
+    const balance = Object.values(elements).reduce(
       (acc, cur) => acc + cur.value,
       0
     );
 
-    lastValue = lastValue + nonInvestmentBalance - lastNonInvestmentBalance;
-    lastNonInvestmentBalance = nonInvestmentBalance;
+    lastValue = lastValue + balance - lastNonInvestmentBalance;
+    lastNonInvestmentBalance = balance;
 
     resultingBalance.push(lastValue);
   });
 
+  // adding the resulting balance to the balance sheet
   const monthlyBalance = balanceSheet.map((mb, i) => {
     const monthlyEntries = Object.entries(mb);
     monthlyEntries.push([
@@ -53,9 +60,16 @@ export const useGetInvestmentBalanceSheet = (
   const [positiveBalance, negativeBalance] = [true, false].map((arg) =>
     getBalance(arg)
   );
-  const { resultingBalance } = useGetResultingBalance(finalMonth);
+  const { resultingBalance } = useGetResultingBalanceSheet(finalMonth);
 
-  // fixing resulting investment so that it's not accumulative
+  const getMonthlyResultingBalance = (i: number, key: string) => {
+    const mri = resultingBalance[i];
+    const balanceContribution =
+      ((mri >= 0 ? positiveBalance[key] : negativeBalance[key]) / 100) * mri;
+    return balanceContribution;
+  };
+
+  // fixing resulting balance so that it's not accumulative
   for (let i = resultingBalance.length - 1; i >= 1; i--) {
     resultingBalance[i] = resultingBalance[i] - resultingBalance[i - 1];
   }
@@ -65,62 +79,13 @@ export const useGetInvestmentBalanceSheet = (
   for (const key in state)
     if (state[key]["APY (%)"] != 0) newState[key] = state[key];
 
-  const bigValue = "2500-01";
-  let initialMonth = Object.values(newState).reduce(
-    (acc, cur) =>
-      cur["Start Date"].localeCompare(acc) < 0 ? cur["Start Date"] : acc,
-    bigValue
+  const balanceSheet = inputValuesToBalanceSheet(
+    newState,
+    finalMonth,
+    getMonthlyResultingBalance
   );
 
-  if (initialMonth === bigValue) {
-    const curDate = new Date();
-    initialMonth = `${curDate.getFullYear()}-${
-      curDate.getMonth() < 10 ? "0" : ""
-    }${curDate.getMonth()}`;
-  }
-
-  const [initialDate, finalDate, numMonths] = findDateValues(
-    initialMonth,
-    finalMonth
-  );
-
-  const balanceSheet: BalanceSheet = Array(numMonths)
-    .fill(undefined)
-    .map(() => ({}));
-
-  Object.entries(newState).forEach(([key, element]) => {
-    const [elementInitialDate, _, elementNumMonths] = findDateValues(
-      element["Start Date"],
-      element["End Date"]
-    );
-
-    const totalNumMonths = findNumMonths(elementInitialDate, finalDate) + 1;
-    const initialIndex = findNumMonths(initialDate, elementInitialDate);
-
-    const [apm, cim] = [
-      element["APY (%)"],
-      element["Contribution IPY (%)"],
-    ].map((num) => Math.pow(num / 100 + 1, 1 / 12));
-
-    let lastValue = element["Current Value"];
-    for (let i = 0; i < totalNumMonths; i++) {
-      const mri = resultingBalance[i + initialIndex];
-      const balanceContribution =
-        ((mri >= 0 ? positiveBalance[key] : negativeBalance[key]) / 100) * mri;
-
-      const contribution =
-        (i < elementNumMonths
-          ? element["Contribution / Month"] * Math.pow(cim, i + 1)
-          : 0) + balanceContribution;
-
-      lastValue = lastValue * apm + contribution;
-      balanceSheet[i + initialIndex][key] = {
-        value: lastValue,
-        Title: element.Title,
-      };
-    }
-  });
-
+  // adding total to investments
   const balanceSheetWithTotal = balanceSheet.map((mb, i) => {
     const monthlyEntries = Object.entries(mb);
     monthlyEntries.push([
@@ -136,17 +101,14 @@ export const useGetInvestmentBalanceSheet = (
   return balanceSheetWithTotal;
 };
 
-export const getMonthlyBalanceSheet = (
+const inputValuesToBalanceSheet = (
+  state: InputValueStore,
   finalMonth: string,
-  state: InputValueStore
-): BalanceSheet => {
-  // removing investments
-  const newState: InputValueStore = {};
-  for (const key in state)
-    if (state[key]["APY (%)"] == 0) newState[key] = state[key];
-
+  getMonthlyResultingBalance: (i: number, key: string) => number
+) => {
+  // finding the initial month
   const bigValue = "2500-01";
-  let initialMonth = Object.values(newState).reduce(
+  let initialMonth = Object.values(state).reduce(
     (acc, cur) =>
       cur["Start Date"].localeCompare(acc) < 0 ? cur["Start Date"] : acc,
     bigValue
@@ -168,7 +130,7 @@ export const getMonthlyBalanceSheet = (
     .fill(undefined)
     .map(() => ({}));
 
-  Object.entries(newState).forEach(([key, element]) => {
+  Object.entries(state).forEach(([key, element]) => {
     const [elementInitialDate, _, elementNumMonths] = findDateValues(
       element["Start Date"],
       element["End Date"]
@@ -184,10 +146,11 @@ export const getMonthlyBalanceSheet = (
 
     let lastValue = element["Current Value"];
     for (let i = 0; i < totalNumMonths; i++) {
+      const balanceContribution = getMonthlyResultingBalance(i, key);
       const contribution =
-        i < elementNumMonths
+        (i < elementNumMonths
           ? element["Contribution / Month"] * Math.pow(cim, i + 1)
-          : 0;
+          : 0) + balanceContribution;
       lastValue = lastValue * apm + contribution;
       balanceSheet[i + initialIndex][key] = {
         value: lastValue,

@@ -9,11 +9,7 @@ import {
   useState,
 } from "react";
 import Cookies from "js-cookie";
-import {
-  BalanceSheet,
-  getMonthlyBalanceSheet,
-  getNewKey,
-} from "./processingFunctions";
+import { getNewKey } from "./processingFunctions";
 
 import template from "./exampleInputValues.json";
 
@@ -80,7 +76,6 @@ interface ContextFunctions {
   getInputValueKeysByType: (type: string) => Array<string>;
   getInvestmentInputValueKeys: () => Array<string>;
   getTypes: () => Array<string>;
-  getBalanceSheet: (finalMonth: string) => BalanceSheet;
   state: InputValueStore;
 }
 
@@ -228,8 +223,6 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
             : [...accumulator, curVal["Type"]],
         [] as Array<string>
       ),
-    getBalanceSheet: (finalMonth: string) =>
-      getMonthlyBalanceSheet(finalMonth, state),
 
     state,
   };

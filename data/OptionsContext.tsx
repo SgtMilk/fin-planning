@@ -16,6 +16,7 @@ export type Option = any;
 export type OptionKey =
   | "First Month"
   | "Last Month"
+  | "Month Interval"
   | "Inflation"
   | "Tax Rate"
   | "Balance-Positive"
@@ -26,6 +27,7 @@ export interface OptionStore {
   "Tax Rate"?: number;
   "First Month"?: string;
   "Last Month"?: string;
+  "Month Interval"?: number;
   "Balance-Positive"?: {
     [key: string]: number;
   };
@@ -35,7 +37,9 @@ export interface OptionStore {
 }
 
 export const getInputType = (label: OptionKey) =>
-  label === "Inflation" || label === "Tax Rate" ? "number" : "month";
+  label === "Inflation" || label === "Tax Rate" || label === "Month Interval"
+    ? "number"
+    : "month";
 
 const getCurMonth = (yearOffset: number) => {
   const curDate = new Date();
@@ -50,6 +54,7 @@ const defaultStore: OptionStore = {
   "Tax Rate": 50,
   "First Month": getCurMonth(0),
   "Last Month": getCurMonth(26),
+  "Month Interval": 12,
 };
 
 enum ReducerTypes {
