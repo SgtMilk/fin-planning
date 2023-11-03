@@ -79,6 +79,27 @@ interface ContextFunctions {
   state: InputValueStore;
 }
 
+const getDefaultInputValue = (type: string) => {
+  const curDate = new Date();
+  const curMonth = `${curDate.getFullYear()}-${
+    curDate.getMonth() < 10 ? "0" : ""
+  }${curDate.getMonth()}`;
+  const emptyInputValue = {
+    Title: "New Value",
+    "Current Value": 0,
+    "Contribution / Month": 0,
+    "Start Date": curMonth,
+    "End Date": curMonth,
+    "Contribution IPY (%)": 4,
+    "APY (%)": 0,
+    Type: type,
+    "Taxed CG": false,
+  };
+  return emptyInputValue;
+};
+
+export const defaultInputValue = getDefaultInputValue("No Type");
+
 const InputValueContext = createContext<ContextFunctions>(
   undefined as unknown as ContextFunctions
 );
@@ -157,22 +178,10 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ type: ReducerTypes.ADD_INPUT_VALUE, data }),
 
     addEmptyInputValue: (type: string) => {
-      const curDate = new Date();
-      const curMonth = `${curDate.getFullYear()}-${
-        curDate.getMonth() < 10 ? "0" : ""
-      }${curDate.getMonth()}`;
-      const emptyInputValue = {
-        Title: "New Value",
-        "Current Value": 0,
-        "Contribution / Month": 0,
-        "Start Date": curMonth,
-        "End Date": curMonth,
-        "Contribution IPY (%)": 4,
-        "APY (%)": 0,
-        Type: type,
-        "Taxed CG": false,
-      };
-      dispatch({ type: ReducerTypes.ADD_INPUT_VALUE, data: emptyInputValue });
+      dispatch({
+        type: ReducerTypes.ADD_INPUT_VALUE,
+        data: getDefaultInputValue(type),
+      });
     },
 
     deleteInputValue: (id: string) =>

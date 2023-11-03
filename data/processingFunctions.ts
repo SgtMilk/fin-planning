@@ -65,7 +65,8 @@ export const useGetInvestmentBalanceSheet = (
   const getMonthlyResultingBalance = (i: number, key: string) => {
     const mri = resultingBalance[i];
     const balanceContribution =
-      ((mri >= 0 ? positiveBalance[key] : negativeBalance[key]) / 100) * mri;
+      (Number(mri >= 0 ? positiveBalance[key] : negativeBalance[key]) / 100) *
+      mri;
     return balanceContribution;
   };
 

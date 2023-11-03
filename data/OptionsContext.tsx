@@ -7,6 +7,7 @@ import {
   ReactNode,
   useEffect,
   useState,
+  useRef,
 } from "react";
 import Cookies from "js-cookie";
 import { useInputValueContext } from ".";
@@ -22,18 +23,26 @@ export type OptionKey =
   | "Balance-Positive"
   | "Balance-Negative";
 
+export const optionKeys: OptionKey[] = [
+  "First Month",
+  "Last Month",
+  "Month Interval",
+  "Inflation",
+  "Tax Rate",
+  "Balance-Positive",
+  "Balance-Negative",
+];
+
+export type Balance = { [key: string]: number };
+
 export interface OptionStore {
   Inflation?: number;
   "Tax Rate"?: number;
   "First Month"?: string;
   "Last Month"?: string;
   "Month Interval"?: number;
-  "Balance-Positive"?: {
-    [key: string]: number;
-  };
-  "Balance-Negative"?: {
-    [key: string]: number;
-  };
+  "Balance-Positive"?: Balance;
+  "Balance-Negative"?: Balance;
 }
 
 export const getInputType = (label: OptionKey) =>
@@ -72,6 +81,8 @@ interface ContextFunctions {
   modifyOption: (id: string, value: any) => void;
   getOption: (id: OptionKey) => Option;
   getBalance: (isPositive: boolean) => { [key: string]: number };
+  isSet: () => boolean;
+  state: OptionStore;
 }
 
 const OptionContext = createContext<ContextFunctions>(
@@ -80,6 +91,26 @@ const OptionContext = createContext<ContextFunctions>(
 
 export const useOptionContext = (): ContextFunctions =>
   useContext(OptionContext);
+
+const fixInitialStore = (store: OptionStore, investmentKeys: string[]) => {
+  optionKeys.forEach((key) => {
+    if (store[key] === undefined) {
+      if (key in ["Balance-Positive", "Balance-Negative"]) {
+        const balance: { [key: string]: number } = {};
+        investmentKeys.forEach((key) => {
+          balance[key] = 100 / investmentKeys.length;
+        });
+        // @ts-ignore
+        store[key] = balance;
+      } else {
+        // @ts-ignore
+        store[key] = defaultStore[key];
+      }
+    }
+  });
+
+  return store;
+};
 
 const OptionsReducer = (
   state: OptionStore,
@@ -110,6 +141,8 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
   const [ready, setReady] = useState<boolean>(false);
   const { getInvestmentInputValueKeys, modifyInflation } =
     useInputValueContext();
+
+  const isSet = useRef<boolean>(false);
 
   const [state, dispatch] = useReducer(OptionsReducer, {});
 
@@ -155,9 +188,15 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
       });
       return balance;
     },
+
+    isSet: () => isSet.current,
+
+    state,
   };
 
   useEffect(() => {
+    if (!isSet.current) isSet.current = true;
+
     // little hack to keep state
     window.onbeforeunload = function () {
       Cookies.set("Options", JSON.stringify(state));
@@ -165,9 +204,15 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
 
     if (!ready) {
       const cookieStringValue = Cookies.get("Options");
+      const cookieObjectValue =
+        cookieStringValue === undefined ? {} : JSON.parse(cookieStringValue);
+      const fixedStore = fixInitialStore(
+        cookieObjectValue,
+        getInvestmentInputValueKeys()
+      );
       dispatch({
         type: ReducerTypes.SET_STORE,
-        data: cookieStringValue ? JSON.parse(cookieStringValue) : {},
+        data: fixedStore,
       });
       setReady(true);
     }
