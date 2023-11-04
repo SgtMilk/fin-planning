@@ -1,4 +1,5 @@
 import { InputValueStore, useInputValueContext, useOptionContext } from ".";
+import { getCurMonth } from "./utils";
 
 export interface BalanceSheetEntry {
   value: number;
@@ -17,11 +18,14 @@ export const useGetResultingBalanceSheet = (finalMonth: string) => {
   for (const key in state)
     if (state[key]["APY (%)"] == 0) newState[key] = state[key];
 
-  const balanceSheet = inputValuesToBalanceSheet(newState, finalMonth, () => 0);
+  const balanceSheet = inputValuesToBalanceSheet(
+    newState,
+    finalMonth,
+    false,
+    () => 0
+  );
 
   // calculting resulting balance
-  let lastValue = 0;
-  let lastNonInvestmentBalance = 0;
   const resultingBalance: Array<number> = [];
 
   balanceSheet.forEach((elements) => {
@@ -30,10 +34,7 @@ export const useGetResultingBalanceSheet = (finalMonth: string) => {
       0
     );
 
-    lastValue = lastValue + balance - lastNonInvestmentBalance;
-    lastNonInvestmentBalance = balance;
-
-    resultingBalance.push(lastValue);
+    resultingBalance.push(balance);
   });
 
   // adding the resulting balance to the balance sheet
@@ -70,11 +71,6 @@ export const useGetInvestmentBalanceSheet = (
     return balanceContribution;
   };
 
-  // fixing resulting balance so that it's not accumulative
-  for (let i = resultingBalance.length - 1; i >= 1; i--) {
-    resultingBalance[i] = resultingBalance[i] - resultingBalance[i - 1];
-  }
-
   // removing non-investments
   const newState: InputValueStore = {};
   for (const key in state)
@@ -83,6 +79,7 @@ export const useGetInvestmentBalanceSheet = (
   const balanceSheet = inputValuesToBalanceSheet(
     newState,
     finalMonth,
+    true,
     getMonthlyResultingBalance
   );
 
@@ -105,6 +102,7 @@ export const useGetInvestmentBalanceSheet = (
 const inputValuesToBalanceSheet = (
   state: InputValueStore,
   finalMonth: string,
+  isSum: boolean,
   getMonthlyResultingBalance: (i: number, key: string) => number
 ) => {
   // finding the initial month
@@ -115,12 +113,7 @@ const inputValuesToBalanceSheet = (
     bigValue
   );
 
-  if (initialMonth === bigValue) {
-    const curDate = new Date();
-    initialMonth = `${curDate.getFullYear()}-${
-      curDate.getMonth() < 10 ? "0" : ""
-    }${curDate.getMonth()}`;
-  }
+  if (initialMonth === bigValue) initialMonth = getCurMonth();
 
   const [initialDate, finalDate, numMonths] = findDateValues(
     initialMonth,
@@ -152,11 +145,12 @@ const inputValuesToBalanceSheet = (
         (i < elementNumMonths
           ? element["Contribution / Month"] * Math.pow(cim, i + 1)
           : 0) + balanceContribution;
-      lastValue = lastValue * apm + contribution;
-      balanceSheet[i + initialIndex][key] = {
-        value: lastValue,
-        Title: element.Title,
-      };
+      lastValue = (isSum ? lastValue * apm : 0) + contribution;
+      if (isSum || lastValue !== 0)
+        balanceSheet[i + initialIndex][key] = {
+          value: lastValue,
+          Title: element.Title,
+        };
     }
   });
   return balanceSheet;

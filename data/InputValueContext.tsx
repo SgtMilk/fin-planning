@@ -12,6 +12,7 @@ import Cookies from "js-cookie";
 import { getNewKey } from "./processingFunctions";
 
 import template from "./exampleInputValues.json";
+import { getCurMonth } from "./utils";
 
 export interface InputValue {
   Title: string;
@@ -35,6 +36,18 @@ export type InputValueKey =
   | "APY (%)"
   | "Taxed CG"
   | "Type";
+
+export const inputValueKeys: InputValueKey[] = [
+  "Title",
+  "Current Value",
+  "Contribution / Month",
+  "Start Date",
+  "End Date",
+  "Contribution IPY (%)",
+  "APY (%)",
+  "Taxed CG",
+  "Type",
+];
 
 export interface InputValueStore {
   [key: string]: InputValue;
@@ -80,10 +93,7 @@ interface ContextFunctions {
 }
 
 const getDefaultInputValue = (type: string) => {
-  const curDate = new Date();
-  const curMonth = `${curDate.getFullYear()}-${
-    curDate.getMonth() < 10 ? "0" : ""
-  }${curDate.getMonth()}`;
+  const curMonth = getCurMonth();
   const emptyInputValue = {
     Title: "New Value",
     "Current Value": 0,

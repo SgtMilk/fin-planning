@@ -11,6 +11,7 @@ import {
 } from "react";
 import Cookies from "js-cookie";
 import { useInputValueContext } from ".";
+import { getCurMonth } from "./utils";
 
 export type Option = any;
 
@@ -50,19 +51,11 @@ export const getInputType = (label: OptionKey) =>
     ? "number"
     : "month";
 
-const getCurMonth = (yearOffset: number) => {
-  const curDate = new Date();
-  const curMonth = curDate.getMonth();
-  return `${curDate.getFullYear() + yearOffset}-${
-    curMonth < 10 ? "0" : ""
-  }${curMonth}`;
-};
-
 const defaultStore: OptionStore = {
   Inflation: 4,
   "Tax Rate": 50,
-  "First Month": getCurMonth(0),
-  "Last Month": getCurMonth(26),
+  "First Month": getCurMonth(),
+  "Last Month": getCurMonth(26 * 12),
   "Month Interval": 12,
 };
 
@@ -94,21 +87,23 @@ export const useOptionContext = (): ContextFunctions =>
 
 const fixInitialStore = (store: OptionStore, investmentKeys: string[]) => {
   optionKeys.forEach((key) => {
-    if (store[key] === undefined) {
-      if (key in ["Balance-Positive", "Balance-Negative"]) {
+    if (key === "Balance-Positive" || key === "Balance-Negative") {
+      if (
+        store[key] === undefined ||
+        Object.values(store[key] as { [key: string]: number }).length === 0
+      ) {
         const balance: { [key: string]: number } = {};
         investmentKeys.forEach((key) => {
           balance[key] = 100 / investmentKeys.length;
         });
         // @ts-ignore
         store[key] = balance;
-      } else {
-        // @ts-ignore
-        store[key] = defaultStore[key];
       }
+    } else {
+      // @ts-ignore
+      if (store[key] === undefined) store[key] = defaultStore[key];
     }
   });
-
   return store;
 };
 
@@ -141,8 +136,6 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
   const [ready, setReady] = useState<boolean>(false);
   const { getInvestmentInputValueKeys, modifyInflation } =
     useInputValueContext();
-
-  const isSet = useRef<boolean>(false);
 
   const [state, dispatch] = useReducer(OptionsReducer, {});
 
@@ -189,14 +182,12 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
       return balance;
     },
 
-    isSet: () => isSet.current,
+    isSet: () => ready,
 
     state,
   };
 
   useEffect(() => {
-    if (!isSet.current) isSet.current = true;
-
     // little hack to keep state
     window.onbeforeunload = function () {
       Cookies.set("Options", JSON.stringify(state));
@@ -206,15 +197,19 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
       const cookieStringValue = Cookies.get("Options");
       const cookieObjectValue =
         cookieStringValue === undefined ? {} : JSON.parse(cookieStringValue);
-      const fixedStore = fixInitialStore(
-        cookieObjectValue,
-        getInvestmentInputValueKeys()
-      );
-      dispatch({
-        type: ReducerTypes.SET_STORE,
-        data: fixedStore,
-      });
-      setReady(true);
+
+      // small hack for now
+      setTimeout(function () {
+        const fixedStore = fixInitialStore(
+          cookieObjectValue,
+          getInvestmentInputValueKeys()
+        );
+        dispatch({
+          type: ReducerTypes.SET_STORE,
+          data: fixedStore,
+        });
+        setReady(true);
+      }, 1);
     }
   });
 

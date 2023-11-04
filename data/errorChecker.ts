@@ -1,6 +1,6 @@
 import {
   Balance,
-  InputValueKey,
+  inputValueKeys,
   optionKeys,
   useInputValueContext,
   useOptionContext,
@@ -46,12 +46,15 @@ const useGetOptionErrors = () => {
         break;
       case "Balance-Positive":
       case "Balance-Negative":
-        const diff =
-          100 -
-          Object.values(state[key] as Balance).reduce(
-            (acc, cur) => acc + Number(cur),
-            0
-          );
+        let sum = 0;
+        Object.values(state[key] as Balance).forEach((b) => {
+          const nb = Number(b);
+          sum += nb;
+          if (nb < 0)
+            errors.push(`[${key}] One of the balance values is under 0.`);
+        });
+
+        const diff = 100 - sum;
         if (diff < 0 || diff > 0.1)
           errors.push(
             `[${key}] Balance doesn't add up to 100 (or close to 100).`
@@ -69,19 +72,7 @@ const useGetInputValuesErrors = () => {
   const errors: string[] = [];
 
   for (const inputKey in state) {
-    const keys: InputValueKey[] = [
-      "Title",
-      "Current Value",
-      "Contribution / Month",
-      "Start Date",
-      "End Date",
-      "Contribution IPY (%)",
-      "APY (%)",
-      "Taxed CG",
-      "Type",
-    ];
-
-    keys.forEach((key) => {
+    inputValueKeys.forEach((key) => {
       if (state[inputKey][key] === undefined)
         errors.push(
           `[${state[inputKey].Type}/${state[inputKey].Title}] Input's ${key} not set.`
@@ -113,6 +104,7 @@ const useGetInputValuesErrors = () => {
             errors.push(
               `[${state[inputKey].Type}/${state[inputKey].Title}] Input's ${key} is below 0.`
             );
+          break;
         default:
           console.error("No Error Checking for", key);
       }

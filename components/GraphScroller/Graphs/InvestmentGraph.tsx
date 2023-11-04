@@ -1,7 +1,11 @@
 import { GraphCard } from "@/components/GraphCard";
 import { useGetInvestmentBalanceSheet } from "@/data/processingFunctions";
 import React from "react";
-import { processBalanceSheet, useReduceData } from "./utils";
+import {
+  processBalanceSheet,
+  useProcessDataFunctions,
+  useReduceData,
+} from "./utils";
 import { useOptionContext } from "@/data";
 
 export const InvestmentGraph = () => {
@@ -10,9 +14,7 @@ export const InvestmentGraph = () => {
     getOption("Last Month")
   );
 
-  const data = processBalanceSheet(investmentBalanceSheet);
+  const processedData = useProcessDataFunctions(investmentBalanceSheet, true);
 
-  const reducedData = useReduceData(data);
-
-  return <GraphCard title="Investments" data={reducedData.slice(1)} />;
+  return <GraphCard title="Investments" data={processedData} />;
 };
