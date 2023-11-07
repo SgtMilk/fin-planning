@@ -134,10 +134,12 @@ const OptionsReducer = (
 
 export const OptionProvider = ({ children }: { children: ReactNode }) => {
   const [ready, setReady] = useState<boolean>(false);
-  const { getInvestmentInputValueKeys, modifyInflation } =
+  const { getInvestmentInputValueKeys, modifyInflation, isSet } =
     useInputValueContext();
 
   const [state, dispatch] = useReducer(OptionsReducer, {});
+
+  const inputValuesReady = isSet();
 
   const OptionFunctions = {
     setStore: (data: OptionStore) =>
@@ -193,25 +195,20 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
       Cookies.set("Options", JSON.stringify(state));
     };
 
-    if (!ready) {
+    if (!ready && inputValuesReady) {
       const cookieStringValue = Cookies.get("Options");
       const cookieObjectValue =
         cookieStringValue === undefined ? {} : JSON.parse(cookieStringValue);
 
-      // small hack for now
-      setTimeout(function () {
-        const fixedStore = fixInitialStore(
-          cookieObjectValue,
-          getInvestmentInputValueKeys()
-        );
-        dispatch({
-          type: ReducerTypes.SET_STORE,
-          data: fixedStore,
-        });
-        setReady(true);
-      }, 1);
+      const keys = getInvestmentInputValueKeys();
+      const fixedStore = fixInitialStore(cookieObjectValue, keys);
+      dispatch({
+        type: ReducerTypes.SET_STORE,
+        data: fixedStore,
+      });
+      setReady(true);
     }
-  });
+  }, [inputValuesReady]);
 
   return (
     <OptionContext.Provider value={OptionFunctions}>

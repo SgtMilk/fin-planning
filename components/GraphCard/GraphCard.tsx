@@ -11,6 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { isDarkMode } from "../Base";
 
 export interface GraphCardProps {
   title: string;
@@ -36,13 +37,20 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
         periodData[key] = Math.round((periodData[key] as number) * 100) / 100;
   });
 
+  const tooltipStyle = isDarkMode()
+    ? {
+        contentStyle: { backgroundColor: "rgb(2 6 23)" },
+        itemStyle: { color: "white" },
+      }
+    : {};
+
   const Graph = () => (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis width={80} />
-        <Tooltip />
+        <Tooltip {...tooltipStyle} />
         <Legend />
         {dataKeys.map((dataKey) => (
           <Line
@@ -50,6 +58,7 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
             type="monotone"
             dataKey={dataKey}
             stroke={generateRandomColor()}
+            // dot={false}
           />
         ))}
       </LineChart>
@@ -57,7 +66,7 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
   );
 
   return (
-    <div className="w-full h-full p-5 bg-slate-50 border border-slate-200 rounded-lg shadow">
+    <div className="w-full h-full p-5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg shadow">
       <div className="w-full h-[10%] flex align-center justify-center">
         <h1 className="text-2xl">{title}</h1>
       </div>
@@ -73,6 +82,8 @@ const generateRandomColor = () =>
   [...Array(6)]
     .map((_, i) => {
       const num = Math.floor(Math.random() * 16);
-      return (i % 2 === 0 && num < 2 ? num + 2 : num).toString(16);
+      if (isDarkMode())
+        return (i % 2 === 0 && num < 2 ? num + 2 : num).toString(16);
+      else return (i % 2 === 0 && num > 14 ? num - 2 : num).toString(16);
     })
     .join("");

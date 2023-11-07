@@ -13,6 +13,8 @@ export const getNewKey = () => Math.random().toString(36).substring(2, 12); // 1
 export const useGetResultingBalanceSheet = (finalMonth: string) => {
   const { state } = useInputValueContext();
 
+  const initialMonth = findInitialMonth(state);
+
   // removing investments
   const newState: InputValueStore = {};
   for (const key in state)
@@ -20,6 +22,7 @@ export const useGetResultingBalanceSheet = (finalMonth: string) => {
 
   const balanceSheet = inputValuesToBalanceSheet(
     newState,
+    initialMonth,
     finalMonth,
     false,
     () => 0
@@ -50,18 +53,17 @@ export const useGetResultingBalanceSheet = (finalMonth: string) => {
     return Object.fromEntries(monthlyEntries);
   });
 
-  return { balanceSheet: monthlyBalance, resultingBalance };
+  return { balanceSheet: monthlyBalance, resultingBalance, initialMonth };
 };
 
-export const useGetInvestmentBalanceSheet = (
-  finalMonth: string
-): BalanceSheet => {
+export const useGetInvestmentBalanceSheet = (finalMonth: string) => {
   const { getBalance } = useOptionContext();
   const { state } = useInputValueContext();
   const [positiveBalance, negativeBalance] = [true, false].map((arg) =>
     getBalance(arg)
   );
-  const { resultingBalance } = useGetResultingBalanceSheet(finalMonth);
+  const { resultingBalance, initialMonth } =
+    useGetResultingBalanceSheet(finalMonth);
 
   const getMonthlyResultingBalance = (i: number, key: string) => {
     const mri = resultingBalance[i];
@@ -78,6 +80,7 @@ export const useGetInvestmentBalanceSheet = (
 
   const balanceSheet = inputValuesToBalanceSheet(
     newState,
+    initialMonth,
     finalMonth,
     true,
     getMonthlyResultingBalance
@@ -96,25 +99,16 @@ export const useGetInvestmentBalanceSheet = (
     return Object.fromEntries(monthlyEntries);
   });
 
-  return balanceSheetWithTotal;
+  return { balanceSheet: balanceSheetWithTotal, initialMonth };
 };
 
 const inputValuesToBalanceSheet = (
   state: InputValueStore,
+  initialMonth: string,
   finalMonth: string,
   isSum: boolean,
   getMonthlyResultingBalance: (i: number, key: string) => number
 ) => {
-  // finding the initial month
-  const bigValue = "2500-01";
-  let initialMonth = Object.values(state).reduce(
-    (acc, cur) =>
-      cur["Start Date"].localeCompare(acc) < 0 ? cur["Start Date"] : acc,
-    bigValue
-  );
-
-  if (initialMonth === bigValue) initialMonth = getCurMonth();
-
   const [initialDate, finalDate, numMonths] = findDateValues(
     initialMonth,
     finalMonth
@@ -143,7 +137,7 @@ const inputValuesToBalanceSheet = (
       const balanceContribution = getMonthlyResultingBalance(i, key);
       const contribution =
         (i < elementNumMonths
-          ? element["Contribution / Month"] * Math.pow(cim, i + 1)
+          ? element["Contribution / Month"] * Math.pow(cim, i)
           : 0) + balanceContribution;
       lastValue = (isSum ? lastValue * apm : 0) + contribution;
       if (isSum || lastValue !== 0)
@@ -154,6 +148,19 @@ const inputValuesToBalanceSheet = (
     }
   });
   return balanceSheet;
+};
+
+const findInitialMonth = (state: InputValueStore) => {
+  // finding the initial month
+  const bigValue = "2500-01";
+  let initialMonth = Object.values(state).reduce(
+    (acc, cur) =>
+      cur["Start Date"].localeCompare(acc) < 0 ? cur["Start Date"] : acc,
+    bigValue
+  );
+
+  if (initialMonth === bigValue) initialMonth = getCurMonth();
+  return initialMonth;
 };
 
 const findDateValues = (

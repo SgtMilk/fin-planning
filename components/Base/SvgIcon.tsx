@@ -1,4 +1,5 @@
 import React from "react";
+import { isDarkMode } from ".";
 
 export interface SvgIconProps {
   handleFunction?: () => void;
@@ -87,7 +88,7 @@ export const SvgIcon = ({
   handleFunction = () => {},
   component,
   isButton = true,
-  isDark = true,
+  isDark = !isDarkMode(),
 }: SvgIconProps) => {
   const Wrapper = ({ children }: { children: React.ReactNode }) =>
     isButton ? (

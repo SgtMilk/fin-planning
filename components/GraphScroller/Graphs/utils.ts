@@ -9,9 +9,10 @@ export interface GraphProps {
 
 export const useProcessDataFunctions = (
   balanceSheet: BalanceSheet,
+  initialMonth: string,
   isAlreadySum: boolean
 ) => {
-  const data = processBalanceSheet(balanceSheet);
+  const data = processBalanceSheet(balanceSheet, initialMonth);
   const reducedData = useReduceData(data, isAlreadySum);
   const slicedData = useRemoveInitialMonths(reducedData);
   return slicedData;
@@ -25,7 +26,6 @@ export const useRemoveInitialMonths = (data: LineProps[]) => {
   for (i = 0; i < data.length; i++) {
     if (initialMonth.localeCompare(data[i].name) <= 0) break;
   }
-  if (i !== 0) i--;
   return data.slice(i);
 };
 
@@ -53,11 +53,16 @@ export const useReduceData = (data: LineProps[], isAlreadySum: boolean) => {
 };
 
 export const processBalanceSheet = (
-  balanceSheet: BalanceSheet
+  balanceSheet: BalanceSheet,
+  initialMonth: string
 ): LineProps[] => {
+  const [initialY, initialM] = initialMonth.split("-");
+  const [curY, curM] = getCurMonth().split("-");
+  const offset =
+    (Number(initialY) - Number(curY)) * 12 + Number(initialM) - Number(curM);
   return balanceSheet.map((monthlyBalanceSheet, i) => {
     const processed: { name: string; [key: string]: number | string } = {
-      name: getCurMonth(i),
+      name: getCurMonth(i + offset),
     };
 
     Object.values(monthlyBalanceSheet).forEach((investment) => {

@@ -90,7 +90,7 @@ export const DateValueBox = ({
         </label>
         <input
           id={label}
-          className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-slate-100"
+          className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           type={type}
           value={(value as { [key: string]: any })[label]}
           onChange={(e: any) => {
@@ -134,7 +134,7 @@ export const DateValueBox = ({
     <div
       className={`${
         isOpen ? "grid grid-cols-2" : "flex flex-row justify-between"
-      } gap-6 p-6 bg-white border border-slate-200 rounded-lg shadow dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700 w-96`}
+      } gap-6 p-6 bg-white border border-slate-200 rounded-lg shadow dark:bg-slate-800 dark:border-slate-700 w-96`}
     >
       {/* The titlebar of the box */}
       <CaretIcon {...{ isOpen, setIsOpen }} />

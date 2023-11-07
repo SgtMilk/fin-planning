@@ -32,16 +32,16 @@ export const BoxScroller = () => {
   });
 
   return (
-    <div className="bg-slate-100 h-full w-[24.5rem]">
+    <div className="bg-slate-100 dark:bg-slate-900 h-full w-[24.5rem]">
       <DndProvider backend={HTML5Backend}>
-        <div className="flex align-center justify-center px-1 py-5 bg-slate-300 h-[5.5rem]">
+        <div className="flex align-center justify-center px-1 py-5 bg-slate-300 dark:bg-slate-950 h-[5.5rem]">
           {ready ? (
             <form
               className="flex flex-row justify-between align-center w-96 px-6"
               onSubmit={(e: any) => e.preventDefault()}
             >
               <input
-                className="bg-slate-50 border border-slate-300 text-slate-900 mr-6 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-slate-100"
+                className="bg-slate-50 border border-slate-300 text-slate-900 mr-6 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-900 dark:border-slate-700 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 type="text"
                 id="newCategoryInput"
                 onChange={(e: any) => {
@@ -92,7 +92,7 @@ const BoxScrollerSection = ({ title }: BoxScrollerSectionProps) => {
 
   return (
     <DropTarget type={title}>
-      <div className="border border-slate-200">
+      <div className="border border-slate-200 dark:border-slate-800">
         <div className="px-1 py-5 text-lg">
           <div className="flex flex-row justify-between w-96 px-6">
             <div className="w-10">

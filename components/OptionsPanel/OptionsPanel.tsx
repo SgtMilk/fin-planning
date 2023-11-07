@@ -22,7 +22,9 @@ export const OptionsPanel = () => {
         <p className="pl-3">Options</p>
       </button>
       {isOpen ? (
-        <div className={`h-screen overflow-scroll no-scrollbar bg-slate-200`}>
+        <div
+          className={`h-screen overflow-scroll no-scrollbar bg-slate-200 dark:bg-slate-900`}
+        >
           <OptionsPanelSection title="Constants">
             <div>
               <ConnectedSingleOptionInput label="Inflation" />
@@ -57,7 +59,7 @@ const OptionsPanelSection = ({ title, children }: OptionsPanelSectionProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
-    <div className="border border-slate-300 p-1">
+    <div className="border border-slate-300 dark:border-slate-700 p-1">
       <div className="px-1 py-5 text-lg">
         <div className="flex flex-row justify-between w-96 px-6">
           <div className="w-5">

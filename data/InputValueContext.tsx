@@ -89,6 +89,7 @@ interface ContextFunctions {
   getInputValueKeysByType: (type: string) => Array<string>;
   getInvestmentInputValueKeys: () => Array<string>;
   getTypes: () => Array<string>;
+  isSet: () => boolean;
   state: InputValueStore;
 }
 
@@ -242,6 +243,8 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
             : [...accumulator, curVal["Type"]],
         [] as Array<string>
       ),
+
+    isSet: () => ready,
 
     state,
   };

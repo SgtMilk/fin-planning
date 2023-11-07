@@ -26,7 +26,7 @@ export const ResultingBalanceOptionInput = ({
 
   return (
     <div
-      className={`m-1 p-6 bg-white border border-slate-200 rounded-lg shadow dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700 w-96`}
+      className={`m-1 p-6 bg-white border border-slate-200 rounded-lg shadow dark:bg-slate-800 dark:border-slate-700 w-96`}
     >
       <div className="flex align-center justify-center pb-5">
         <p>{isPositive ? "When Positive" : "When Negative"}</p>
@@ -42,7 +42,7 @@ export const ResultingBalanceOptionInput = ({
             </label>
             <input
               id={label}
-              className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 hover:bg-slate-100"
+              className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               type="number"
               value={balance[label]}
               onChange={(e: any) => {
