@@ -52,10 +52,11 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
         <YAxis width={80} />
         <Tooltip {...tooltipStyle} />
         <Legend />
-        {dataKeys.map((dataKey) => (
+        {dataKeys.map((dataKey, i) => (
           <Line
             key={dataKey}
             type="monotone"
+            // isAnimationActive={false}
             dataKey={dataKey}
             stroke={generateRandomColor()}
             // dot={false}
