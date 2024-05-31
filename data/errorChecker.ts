@@ -47,7 +47,10 @@ const useGetOptionErrors = () => {
       case "Balance-Positive":
       case "Balance-Negative":
         // checking if there are investments
-        if (!state[key] || state[key]?.lengt || 0 === 0) {
+        if (
+          typeof state[key] != "object" ||
+          Object.keys(state[key] as Balance).length === 0
+        ) {
           errors.push(
             `[${key}] There are no investments to dump your balance into (change API to positive number of one of your values).`
           );

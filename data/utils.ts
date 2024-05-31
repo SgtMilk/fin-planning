@@ -9,6 +9,8 @@ export const getCurMonth = (monthOffset: number = 0) => {
 };
 
 export const getCookies = (name: string) => {
+  if (typeof window === "undefined") return {};
+
   const cookieStringValue = Cookies.get(name);
   return cookieStringValue === undefined ? {} : JSON.parse(cookieStringValue);
 };

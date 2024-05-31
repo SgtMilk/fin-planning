@@ -3,19 +3,11 @@
 import React from "react";
 import { InvestmentGraph, MonthlyBalanceGraph } from "./Graphs";
 import { useErrorChecker } from "@/data/errorChecker";
-import { useInputValueContext, useOptionContext } from "@/data";
+import { useInputValueContext } from "@/data";
 
 export const GraphScroller = () => {
   const { optionErrors, inputValueErrors, numErrors } = useErrorChecker();
-  const { isSet } = useOptionContext();
   const { state } = useInputValueContext();
-
-  if (!isSet())
-    return (
-      <div className="w-full h-full overflow-scroll no-scrollbar p-7">
-        <h1>Loading...</h1>
-      </div>
-    );
 
   if (!state || Object.keys(state).length === 0) {
     return (
@@ -94,10 +86,10 @@ export const GraphScroller = () => {
               <li>
                 <b>Inflation:</b> sets the averare yearly inflation, in % per
                 year.
-                <li>
-                  <b>Tax Rate:</b> still in progress, please don&apos;t use it
-                  for now.
-                </li>
+              </li>
+              <li>
+                <b>Tax Rate:</b> still in progress, please don&apos;t use it for
+                now.
               </li>
             </ul>
           </li>
@@ -108,12 +100,12 @@ export const GraphScroller = () => {
               <li>
                 <b>Month Interval:</b> sets on the graphs the month interval
                 where values are shown (ex: 1 for monthly and 12 for yearly).
-                <li>
-                  <b>First Month:</b> the first month shown on the graphs.
-                </li>
-                <li>
-                  <b>Last Month:</b> the last month shown on the graphs.
-                </li>
+              </li>
+              <li>
+                <b>First Month:</b> the first month shown on the graphs.
+              </li>
+              <li>
+                <b>Last Month:</b> the last month shown on the graphs.
               </li>
             </ul>
           </li>

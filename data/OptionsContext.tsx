@@ -6,7 +6,6 @@ import {
   useContext,
   ReactNode,
   useEffect,
-  useState,
 } from "react";
 import { useInputValueContext } from ".";
 import { getCookies, getCurMonth, setCookies } from "./utils";
@@ -74,7 +73,6 @@ interface ContextFunctions {
   getBalance: (isPositive: boolean) => { [key: string]: number };
   saveOptionsContext: () => void;
   checkOptionsChange: () => boolean;
-  isSet: () => boolean;
   state: OptionStore;
 }
 
@@ -88,6 +86,20 @@ export const useOptionContext = (): ContextFunctions =>
 const fixInitialStore = (store: OptionStore, investmentKeys: string[]) => {
   optionKeys.forEach((key) => {
     if (key === "Balance-Positive" || key === "Balance-Negative") {
+      const compare = (list1: string[], list2: string[]) => {
+        if (list1.length != list2.length) return false;
+        const sorted1 = list1.sort();
+        const sorted2 = list2.sort();
+        for (let i = 0; i < sorted1.length; i++) {
+          if (sorted1[i] !== sorted2[i]) return false;
+        }
+
+        return true;
+      };
+
+      if (!compare(investmentKeys, Object.keys(store[key] || [])))
+        store[key] = undefined;
+
       if (
         store[key] === undefined ||
         Object.values(store[key] as { [key: string]: number }).length === 0
@@ -133,13 +145,14 @@ const OptionsReducer = (
 };
 
 export const OptionProvider = ({ children }: { children: ReactNode }) => {
-  const [ready, setReady] = useState<boolean>(false);
-  const { getInvestmentInputValueKeys, modifyInflation, isSet } =
+  const { getInvestmentInputValueKeys, modifyInflation } =
     useInputValueContext();
 
-  const [state, dispatch] = useReducer(OptionsReducer, {});
+  const cookies = getCookies("Options");
 
-  const inputValuesReady = isSet();
+  const investmentKeys = getInvestmentInputValueKeys();
+  const fixedStore = fixInitialStore(cookies, investmentKeys);
+  const [state, dispatch] = useReducer(OptionsReducer, fixedStore);
 
   const OptionFunctions = {
     setStore: (data: OptionStore) =>
@@ -193,24 +206,20 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
       return JSON.stringify(cookies) !== JSON.stringify(state);
     },
 
-    isSet: () => ready,
-
     state,
   };
 
   useEffect(() => {
-    if (!ready && inputValuesReady) {
-      const cookieObjectValue = getCookies("Options");
-
-      const keys = getInvestmentInputValueKeys();
-      const fixedStore = fixInitialStore(cookieObjectValue, keys);
+    const keys = investmentKeys;
+    const stateCopy = JSON.parse(JSON.stringify(state));
+    const fixedStore = fixInitialStore(stateCopy, keys);
+    if (JSON.stringify(fixedStore) !== JSON.stringify(state)) {
       dispatch({
         type: ReducerTypes.SET_STORE,
         data: fixedStore,
       });
-      setReady(true);
     }
-  }, [inputValuesReady]);
+  }, [investmentKeys]);
 
   return (
     <OptionContext.Provider value={OptionFunctions}>

@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useReducer,
-  useContext,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useReducer, useContext, ReactNode } from "react";
 import { getNewKey } from "./processingFunctions";
 
 import { getCookies, getCurMonth, setCookies } from "./utils";
@@ -89,7 +82,6 @@ interface ContextFunctions {
   getTypes: () => Array<string>;
   saveInputValueContext: () => void;
   checkInputValueChange: () => boolean;
-  isSet: () => boolean;
   state: InputValueStore;
 }
 
@@ -174,9 +166,10 @@ const InputValuesReducer = (
 };
 
 export const InputValueProvider = ({ children }: { children: ReactNode }) => {
-  const [ready, setReady] = useState<boolean>(false);
-
-  const [state, dispatch] = useReducer(InputValuesReducer, {});
+  const [state, dispatch] = useReducer(
+    InputValuesReducer,
+    getCookies("inputValues")
+  );
 
   const inputValueFunctions = {
     setStore: (data: InputValueStore) =>
@@ -230,10 +223,11 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
         .filter(([_, value]) => value["Type"] == type)
         .map((entry) => entry[0]),
 
-    getInvestmentInputValueKeys: () =>
-      Object.entries(state)
-        .filter(([_, value]) => value["APY (%)"] !== 0)
-        .map((entry) => entry[0]),
+    getInvestmentInputValueKeys: () => {
+      return Object.entries(state)
+        .filter(([_, value]) => Number(value["APY (%)"]) !== 0)
+        .map((entry) => entry[0]);
+    },
 
     getTypes: () =>
       Object.values(state).reduce(
@@ -253,21 +247,8 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
       return JSON.stringify(cookies) !== JSON.stringify(state);
     },
 
-    isSet: () => ready,
-
     state,
   };
-
-  useEffect(() => {
-    if (!ready) {
-      const cookies = getCookies("inputValues");
-      dispatch({
-        type: ReducerTypes.SET_STORE,
-        data: cookies,
-      });
-      setReady(true);
-    }
-  });
 
   return (
     <InputValueContext.Provider value={inputValueFunctions}>
