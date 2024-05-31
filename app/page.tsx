@@ -1,8 +1,7 @@
 "use client";
 
-import { BoxScroller, GraphScroller } from "@/components";
+import { Menu, GraphScroller } from "@/components";
 import { InputValueProvider, OptionProvider, useSaveContexts } from "@/data";
-import { OptionsPanel } from "@/components/OptionsPanel";
 
 export default function Home() {
   return (
@@ -21,11 +20,10 @@ const ProvidedHome = () => {
 
   return (
     <div className="h-screen w-full flex flex-row">
-      <BoxScroller />
+      <Menu />
       <div className="w-[calc(100vw-24.5rem)] h-full">
         <GraphScroller />
       </div>
-      <OptionsPanel />
     </div>
   );
 };

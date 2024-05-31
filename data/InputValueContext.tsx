@@ -11,7 +11,6 @@ import {
 import Cookies from "js-cookie";
 import { getNewKey } from "./processingFunctions";
 
-import template from "./exampleInputValues.json";
 import { getCurMonth } from "./utils";
 
 export interface InputValue {
@@ -257,8 +256,6 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!ready) {
       let cookieStringValue = Cookies.get("inputValues");
-      if (!cookieStringValue || cookieStringValue === "{}")
-        cookieStringValue = JSON.stringify(template);
       dispatch({
         type: ReducerTypes.SET_STORE,
         data: cookieStringValue ? JSON.parse(cookieStringValue) : {},

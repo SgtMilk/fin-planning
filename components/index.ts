@@ -1,5 +1,3 @@
-export * from "./BoxScroller";
+export * from "./Menu";
 
 export * from "./GraphScroller";
-
-export * from "./OptionsPanel";

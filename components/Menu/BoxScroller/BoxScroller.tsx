@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { ConnectedDateValueBox } from "../DateValueBox/ConnectedDateValueBox";
+import { ConnectedDateValueBox } from "../../DateValueBox/ConnectedDateValueBox";
 import { useInputValueContext } from "@/data";
-import { AddIcon, CaretIcon, DropTarget, EditIcon } from "../Base";
+import { AddIcon, CaretIcon, DropTarget, EditIcon } from "../../Base";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
@@ -32,7 +32,7 @@ export const BoxScroller = () => {
   });
 
   return (
-    <div className="bg-slate-100 dark:bg-slate-900 h-full w-[24.5rem]">
+    <div>
       <DndProvider backend={HTML5Backend}>
         <div className="flex align-center justify-center px-1 py-5 bg-slate-300 dark:bg-slate-950 h-[5.5rem]">
           {ready ? (
