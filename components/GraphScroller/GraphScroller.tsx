@@ -17,7 +17,7 @@ export const GraphScroller = () => {
         <p>
           <b>{"\u26A0"} Notice:</b> If you want to save your work, don&apos;t
           forget to hit ctrl/cmd for pc/mac + s. This will save your data to
-          your cookies (everything is saved on your computer 🚀). <b>Do not</b>
+          your cookies (everything is saved on your computer 🚀). <b>Do not</b>{" "}
           delete the cookies on this website if you want to keep your work.
         </p>
         <br />
