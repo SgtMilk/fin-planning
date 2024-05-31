@@ -38,7 +38,7 @@ export const ResultingBalanceOptionInput = ({
               htmlFor={label}
               className="block mb-2 text-sm font-medium text-slate-900 dark:text-white"
             >
-              {getInputValue(label)?.Title || "beep"}
+              {getInputValue(label)?.Title || "Name missing"}
             </label>
             <input
               id={label}

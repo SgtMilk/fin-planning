@@ -39,7 +39,7 @@ export interface OptionsPanelSectionProps {
 }
 
 const OptionsPanelSection = ({ title, children }: OptionsPanelSectionProps) => {
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <div className="border border-slate-300 dark:border-slate-700 p-1">
