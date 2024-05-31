@@ -23,9 +23,9 @@ export const GraphScroller = () => {
         <h1 className="text-3xl font-extrabold dark:text-white">Welcome!</h1>
         <br />
         <p>
-          <b>{"\u26A0"} Notice:</b> If you want to save your work, don't forget
-          to hit ctrl/cmd for pc/mac + s. This will save your data to your
-          cookies (everything is saved on your computer 🚀). <b>Do not</b>{" "}
+          <b>{"\u26A0"} Notice:</b> If you want to save your work, don&apos;t
+          forget to hit ctrl/cmd for pc/mac + s. This will save your data to
+          your cookies (everything is saved on your computer 🚀). <b>Do not</b>
           delete the cookies on this website if you want to keep your work.
         </p>
         <br />
@@ -79,7 +79,8 @@ export const GraphScroller = () => {
             options.
           </li>
           <li>
-            <b>Taxed CG:</b> still in progress, please don't use it for now.
+            <b>Taxed CG:</b> still in progress, please don&apos;t use it for
+            now.
           </li>
         </ul>
         <br />
@@ -94,8 +95,8 @@ export const GraphScroller = () => {
                 <b>Inflation:</b> sets the averare yearly inflation, in % per
                 year.
                 <li>
-                  <b>Tax Rate:</b> still in progress, please don't use it for
-                  now.
+                  <b>Tax Rate:</b> still in progress, please don&apos;t use it
+                  for now.
                 </li>
               </li>
             </ul>
