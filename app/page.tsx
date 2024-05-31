@@ -1,7 +1,12 @@
 "use client";
 
 import { Menu, GraphScroller } from "@/components";
-import { InputValueProvider, OptionProvider, useSaveContexts } from "@/data";
+import {
+  InputValueProvider,
+  OptionProvider,
+  useAddNotice,
+  useSaveContexts,
+} from "@/data";
 
 export default function Home() {
   return (
@@ -17,6 +22,7 @@ export default function Home() {
 
 const ProvidedHome = () => {
   useSaveContexts();
+  useAddNotice();
 
   return (
     <div className="h-screen w-full flex flex-row">

@@ -8,9 +8,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import Cookies from "js-cookie";
 import { useInputValueContext } from ".";
-import { getCurMonth } from "./utils";
+import { getCookies, getCurMonth, setCookies } from "./utils";
 
 export type Option = any;
 
@@ -74,6 +73,7 @@ interface ContextFunctions {
   getOption: (id: OptionKey) => Option;
   getBalance: (isPositive: boolean) => { [key: string]: number };
   saveOptionsContext: () => void;
+  checkOptionsChange: () => boolean;
   isSet: () => boolean;
   state: OptionStore;
 }
@@ -185,7 +185,12 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
     },
 
     saveOptionsContext: () => {
-      Cookies.set("Options", JSON.stringify(state));
+      setCookies("Options", state);
+    },
+
+    checkOptionsChange: () => {
+      const cookies = getCookies("Options");
+      return JSON.stringify(cookies) !== JSON.stringify(state);
     },
 
     isSet: () => ready,
@@ -195,9 +200,7 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!ready && inputValuesReady) {
-      const cookieStringValue = Cookies.get("Options");
-      const cookieObjectValue =
-        cookieStringValue === undefined ? {} : JSON.parse(cookieStringValue);
+      const cookieObjectValue = getCookies("Options");
 
       const keys = getInvestmentInputValueKeys();
       const fixedStore = fixInitialStore(cookieObjectValue, keys);

@@ -8,10 +8,9 @@ import {
   useEffect,
   useState,
 } from "react";
-import Cookies from "js-cookie";
 import { getNewKey } from "./processingFunctions";
 
-import { getCurMonth } from "./utils";
+import { getCookies, getCurMonth, setCookies } from "./utils";
 
 export interface InputValue {
   Title: string;
@@ -89,6 +88,7 @@ interface ContextFunctions {
   getInvestmentInputValueKeys: () => Array<string>;
   getTypes: () => Array<string>;
   saveInputValueContext: () => void;
+  checkInputValueChange: () => boolean;
   isSet: () => boolean;
   state: InputValueStore;
 }
@@ -245,7 +245,12 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
       ),
 
     saveInputValueContext: () => {
-      Cookies.set("inputValues", JSON.stringify(state));
+      setCookies("inputValues", state);
+    },
+
+    checkInputValueChange: () => {
+      const cookies = getCookies("inputValues");
+      return JSON.stringify(cookies) !== JSON.stringify(state);
     },
 
     isSet: () => ready,
@@ -255,10 +260,10 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!ready) {
-      let cookieStringValue = Cookies.get("inputValues");
+      const cookies = getCookies("inputValues");
       dispatch({
         type: ReducerTypes.SET_STORE,
-        data: cookieStringValue ? JSON.parse(cookieStringValue) : {},
+        data: cookies,
       });
       setReady(true);
     }

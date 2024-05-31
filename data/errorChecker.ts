@@ -46,6 +46,14 @@ const useGetOptionErrors = () => {
         break;
       case "Balance-Positive":
       case "Balance-Negative":
+        // checking if there are investments
+        if (!state[key] || state[key]?.lengt || 0 === 0) {
+          errors.push(
+            `[${key}] There are no investments to dump your balance into (change API to positive number of one of your values).`
+          );
+          break;
+        }
+
         let sum = 0;
         Object.values(state[key] as Balance).forEach((b) => {
           const nb = Number(b);

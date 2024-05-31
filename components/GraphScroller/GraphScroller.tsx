@@ -3,11 +3,12 @@
 import React from "react";
 import { InvestmentGraph, MonthlyBalanceGraph } from "./Graphs";
 import { useErrorChecker } from "@/data/errorChecker";
-import { useOptionContext } from "@/data";
+import { useInputValueContext, useOptionContext } from "@/data";
 
 export const GraphScroller = () => {
   const { optionErrors, inputValueErrors, numErrors } = useErrorChecker();
   const { isSet } = useOptionContext();
+  const { state } = useInputValueContext();
 
   if (!isSet())
     return (
@@ -15,6 +16,114 @@ export const GraphScroller = () => {
         <h1>Loading...</h1>
       </div>
     );
+
+  if (!state || Object.keys(state).length === 0) {
+    return (
+      <div className="w-full h-full overflow-scroll no-scrollbar p-7">
+        <h1 className="text-3xl font-extrabold dark:text-white">Welcome!</h1>
+        <br />
+        <p>
+          <b>{"\u26A0"} Notice:</b> If you want to save your work, don't forget
+          to hit ctrl/cmd for pc/mac + s. This will save your data to your
+          cookies (everything is saved on your computer 🚀). <b>Do not</b>{" "}
+          delete the cookies on this website if you want to keep your work.
+        </p>
+        <br />
+        <h1 className="text-2xl font-extrabold dark:text-white">Inputs</h1>
+        <br />
+        <p>
+          You can start by adding categories and values in the Inputs tab on the
+          left. This app works like a concatenation of multiple financial
+          calculators. Each value has the following options:
+        </p>
+        <br />
+        <ul className="list-disc px-5">
+          <li>
+            <b>Title:</b> the displayed title on the graph.
+          </li>
+          <li>
+            <b>Contribution / Month:</b> how much money is contributed to this
+            value every month.
+          </li>
+          <li>
+            <b>Start Date:</b> when the contributions start (inclusive)
+          </li>
+          <li>
+            <b>End Date:</b> when the contributions stop (inclusive)
+          </li>
+          <li>
+            <b>Contribution IPY (%):</b> how much the contributions will augment
+            with time, in percentage per year.
+          </li>
+          <li>
+            <b>APY (%):</b> how much the value of an investment will go up per
+            year, in percentage per year.
+          </li>
+          <li>
+            <b>Current Value:</b> the value at the moment, outside of
+            contributions.
+          </li>
+        </ul>
+        <br />
+        <p>...and the following shortcuts:</p>
+        <br />
+        <ul className="list-disc px-5">
+          <li>
+            <b>One-Time:</b> sets the end date to the start date.
+          </li>
+          <li>
+            <b>No End Date:</b> sets the end date in the year 2500.
+          </li>
+          <li>
+            <b>CI = Inflation:</b> sets the CAPY to the inflation set in the
+            options.
+          </li>
+          <li>
+            <b>Taxed CG:</b> still in progress, please don't use it for now.
+          </li>
+        </ul>
+        <br />
+        <h1 className="text-2xl font-extrabold dark:text-white">Options</h1>
+        <br />
+        <ul className="list-disc px-5">
+          <li>
+            <b>Constants:</b>
+            <br />
+            <ul className="list-disc px-5">
+              <li>
+                <b>Inflation:</b> sets the averare yearly inflation, in % per
+                year.
+                <li>
+                  <b>Tax Rate:</b> still in progress, please don't use it for
+                  now.
+                </li>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <b>Graph:</b>
+            <br />
+            <ul className="list-disc px-5">
+              <li>
+                <b>Month Interval:</b> sets on the graphs the month interval
+                where values are shown (ex: 1 for monthly and 12 for yearly).
+                <li>
+                  <b>First Month:</b> the first month shown on the graphs.
+                </li>
+                <li>
+                  <b>Last Month:</b> the last month shown on the graphs.
+                </li>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <b>Resulting Balance:</b> for a positive or a negative balance, sets
+            in which investment to drop the remaining balance, in percentage.
+          </li>
+        </ul>
+      </div>
+    );
+  }
 
   if (numErrors) {
     return (

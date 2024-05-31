@@ -25,3 +25,15 @@ export const useSaveContexts = () => {
     false
   );
 };
+
+export const useAddNotice = () => {
+  const { saveInputValueContext } = useInputValueContext();
+  const { saveOptionsContext } = useOptionContext();
+
+  if (typeof window === "undefined") return;
+
+  window.addEventListener("beforeunload", function (event) {
+    saveInputValueContext();
+    saveOptionsContext();
+  });
+};
