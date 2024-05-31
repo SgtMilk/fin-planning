@@ -7,7 +7,6 @@ import {
   ReactNode,
   useEffect,
   useState,
-  useRef,
 } from "react";
 import Cookies from "js-cookie";
 import { useInputValueContext } from ".";
