@@ -44,6 +44,23 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
       }
     : {};
 
+  const generateRandomColor = () =>
+    "#" +
+    [...Array(6)]
+      .map((_, i) => {
+        const num = Math.floor(genRandom() * 16);
+        if (isDarkMode())
+          return (i % 2 === 0 && num < 4 ? num + 2 : num).toString(16);
+        else return (i % 2 === 0 && num > 12 ? num - 2 : num).toString(16);
+      })
+      .join("");
+
+  var seed = 1;
+  const genRandom = () => {
+    var x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+  };
+
   const Graph = () => (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data}>
@@ -58,6 +75,7 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
             type="monotone"
             dataKey={dataKey}
             stroke={generateRandomColor()}
+            isAnimationActive={false}
             // dot={false}
           />
         ))}
@@ -76,14 +94,3 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
     </div>
   );
 };
-
-const generateRandomColor = () =>
-  "#" +
-  [...Array(6)]
-    .map((_, i) => {
-      const num = Math.floor(Math.random() * 16);
-      if (isDarkMode())
-        return (i % 2 === 0 && num < 2 ? num + 2 : num).toString(16);
-      else return (i % 2 === 0 && num > 14 ? num - 2 : num).toString(16);
-    })
-    .join("");

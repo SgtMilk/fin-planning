@@ -74,6 +74,7 @@ interface ContextFunctions {
   modifyOption: (id: string, value: any) => void;
   getOption: (id: OptionKey) => Option;
   getBalance: (isPositive: boolean) => { [key: string]: number };
+  saveOptionsContext: () => void;
   isSet: () => boolean;
   state: OptionStore;
 }
@@ -184,17 +185,16 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
       return balance;
     },
 
+    saveOptionsContext: () => {
+      Cookies.set("Options", JSON.stringify(state));
+    },
+
     isSet: () => ready,
 
     state,
   };
 
   useEffect(() => {
-    // little hack to keep state
-    window.onbeforeunload = function () {
-      Cookies.set("Options", JSON.stringify(state));
-    };
-
     if (!ready && inputValuesReady) {
       const cookieStringValue = Cookies.get("Options");
       const cookieObjectValue =

@@ -89,6 +89,7 @@ interface ContextFunctions {
   getInputValueKeysByType: (type: string) => Array<string>;
   getInvestmentInputValueKeys: () => Array<string>;
   getTypes: () => Array<string>;
+  saveInputValueContext: () => void;
   isSet: () => boolean;
   state: InputValueStore;
 }
@@ -244,17 +245,16 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
         [] as Array<string>
       ),
 
+    saveInputValueContext: () => {
+      Cookies.set("inputValues", JSON.stringify(state));
+    },
+
     isSet: () => ready,
 
     state,
   };
 
   useEffect(() => {
-    // little hack to keep state
-    window.onbeforeunload = function () {
-      Cookies.set("inputValues", JSON.stringify(state));
-    };
-
     if (!ready) {
       let cookieStringValue = Cookies.get("inputValues");
       if (!cookieStringValue || cookieStringValue === "{}")
