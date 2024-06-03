@@ -17,7 +17,6 @@ export type OptionKey =
   | "Last Month"
   | "Month Interval"
   | "Inflation"
-  | "Tax Rate"
   | "Balance-Positive"
   | "Balance-Negative";
 
@@ -26,7 +25,6 @@ export const optionKeys: OptionKey[] = [
   "Last Month",
   "Month Interval",
   "Inflation",
-  "Tax Rate",
   "Balance-Positive",
   "Balance-Negative",
 ];
@@ -35,7 +33,6 @@ export type Balance = { [key: string]: number };
 
 export interface OptionStore {
   Inflation?: number;
-  "Tax Rate"?: number;
   "First Month"?: string;
   "Last Month"?: string;
   "Month Interval"?: number;
@@ -44,13 +41,10 @@ export interface OptionStore {
 }
 
 export const getInputType = (label: OptionKey) =>
-  label === "Inflation" || label === "Tax Rate" || label === "Month Interval"
-    ? "number"
-    : "month";
+  label === "Inflation" || label === "Month Interval" ? "number" : "month";
 
 const defaultStore: OptionStore = {
   Inflation: 4,
-  "Tax Rate": 50,
   "First Month": getCurMonth(),
   "Last Month": getCurMonth(26 * 12),
   "Month Interval": 12,

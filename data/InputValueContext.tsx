@@ -14,7 +14,6 @@ export interface InputValue {
   "Contribution IPY (%)": number;
   "APY (%)": number;
   Type: string;
-  "Taxed CG": boolean;
 }
 
 export type InputValueKey =
@@ -25,7 +24,6 @@ export type InputValueKey =
   | "End Date"
   | "Contribution IPY (%)"
   | "APY (%)"
-  | "Taxed CG"
   | "Type";
 
 export const inputValueKeys: InputValueKey[] = [
@@ -36,7 +34,6 @@ export const inputValueKeys: InputValueKey[] = [
   "End Date",
   "Contribution IPY (%)",
   "APY (%)",
-  "Taxed CG",
   "Type",
 ];
 
@@ -82,6 +79,7 @@ interface ContextFunctions {
   getTypes: () => Array<string>;
   saveInputValueContext: () => void;
   checkInputValueChange: () => boolean;
+  isEmpty: () => boolean;
   state: InputValueStore;
 }
 
@@ -96,7 +94,6 @@ const getDefaultInputValue = (type: string) => {
     "Contribution IPY (%)": 4,
     "APY (%)": 0,
     Type: type,
-    "Taxed CG": false,
   };
   return emptyInputValue;
 };
@@ -246,6 +243,8 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
       const cookies = getCookies("inputValues");
       return JSON.stringify(cookies) !== JSON.stringify(state);
     },
+
+    isEmpty: () => !state || Object.keys(state).length === 0,
 
     state,
   };

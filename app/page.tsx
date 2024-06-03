@@ -7,6 +7,7 @@ import {
   useAddNotice,
   useSaveContexts,
 } from "@/data";
+import { useState } from "react";
 
 export default function Home() {
   return (
@@ -24,11 +25,18 @@ const ProvidedHome = () => {
   useSaveContexts();
   useAddNotice();
 
+  const [openInstructions, setOpenInstructions] = useState<boolean>(false);
+
+  const menuProps = {
+    openInstructions,
+    setOpenInstructions: () => setOpenInstructions(!openInstructions),
+  };
+
   return (
     <div className="h-screen w-full flex flex-row">
-      <Menu />
+      <Menu {...menuProps} />
       <div className="w-[calc(100vw-24.5rem)] h-full">
-        <GraphScroller />
+        <GraphScroller openInstructions={openInstructions} />
       </div>
     </div>
   );

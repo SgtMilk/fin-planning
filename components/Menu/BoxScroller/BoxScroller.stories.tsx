@@ -45,7 +45,6 @@ const Child = () => {
       "Contribution IPY (%)": 5,
       "APY (%)": 5,
       Type: "Investment",
-      "Taxed CG": false,
     },
     {
       Title: "Groceries",
@@ -56,7 +55,6 @@ const Child = () => {
       "Contribution IPY (%)": 5,
       "APY (%)": 5,
       Type: "Investment",
-      "Taxed CG": false,
     },
     {
       Title: "Groceries",
@@ -67,7 +65,6 @@ const Child = () => {
       "Contribution IPY (%)": 5,
       "APY (%)": 5,
       Type: "Expense",
-      "Taxed CG": false,
     },
     {
       Title: "Groceries",
@@ -78,7 +75,6 @@ const Child = () => {
       "Contribution IPY (%)": 5,
       "APY (%)": 5,
       Type: "Expense",
-      "Taxed CG": false,
     },
     {
       Title: "Groceries",
@@ -89,7 +85,6 @@ const Child = () => {
       "Contribution IPY (%)": 5,
       "APY (%)": 5,
       Type: "Expense",
-      "Taxed CG": false,
     },
   ];
 

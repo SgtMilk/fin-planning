@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BoxScroller } from "./BoxScroller";
 import { OptionsPanel } from "./OptionsPanel";
+import { useInputValueContext } from "@/data";
 
 enum MenuState {
   Main,
@@ -8,8 +9,15 @@ enum MenuState {
   Inputs,
 }
 
-export const Menu = () => {
+export const Menu = ({
+  openInstructions,
+  setOpenInstructions,
+}: {
+  openInstructions: boolean;
+  setOpenInstructions: () => void;
+}) => {
   const [menuState, setMenuState] = useState<MenuState>(MenuState.Main);
+  const { isEmpty } = useInputValueContext();
 
   const ChooseState = () => {
     switch (menuState) {
@@ -18,6 +26,7 @@ export const Menu = () => {
           <div>
             <Button to={MenuState.Inputs} />
             <Button to={MenuState.Options} />
+            {isEmpty() ? null : <InstructionsButton />}
           </div>
         );
       }
@@ -52,6 +61,23 @@ export const Menu = () => {
         <div className="flex flex-row justify-between w-96 px-6">
           <div className="h-7 overflow-none">
             <p>{MenuState[to]}</p>
+          </div>
+        </div>
+      </div>
+    </button>
+  );
+
+  const InstructionsButton = () => (
+    <button
+      className="border border-slate-300 dark:border-slate-700 p-1"
+      onClick={() => setOpenInstructions()}
+    >
+      <div className="px-1 py-5 text-lg">
+        <div className="flex flex-row justify-between w-96 px-6">
+          <div className="h-7 overflow-none">
+            <p>
+              {openInstructions ? "Close Instructions" : "Open Instructions"}
+            </p>
           </div>
         </div>
       </div>

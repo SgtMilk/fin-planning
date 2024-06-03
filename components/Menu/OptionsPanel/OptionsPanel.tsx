@@ -13,7 +13,6 @@ export const OptionsPanel = () => {
       <OptionsPanelSection title="Constants">
         <div>
           <ConnectedSingleOptionInput label="Inflation" />
-          <ConnectedSingleOptionInput label="Tax Rate" />
         </div>
       </OptionsPanelSection>
       <OptionsPanelSection title="Graph">

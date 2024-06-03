@@ -40,7 +40,6 @@ const useGetOptionErrors = () => {
           errors.push(`[${key}] ${key} is below 1.`);
         break;
       case "Inflation":
-      case "Tax Rate":
         if ((state[key] as number) < 0)
           errors.push(`[${key}] ${key} is below 0.`);
         break;
@@ -93,7 +92,6 @@ const useGetInputValuesErrors = () => {
       switch (key) {
         case "Title":
         case "Current Value":
-        case "Taxed CG":
         case "Type":
         case "Contribution / Month":
           break;

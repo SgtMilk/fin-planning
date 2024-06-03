@@ -5,21 +5,25 @@ import { InvestmentGraph, MonthlyBalanceGraph } from "./Graphs";
 import { useErrorChecker } from "@/data/errorChecker";
 import { useInputValueContext } from "@/data";
 
-export const GraphScroller = () => {
+export const GraphScroller = ({
+  openInstructions,
+}: {
+  openInstructions: boolean;
+}) => {
   const { optionErrors, inputValueErrors, numErrors } = useErrorChecker();
-  const { state } = useInputValueContext();
+  const { isEmpty } = useInputValueContext();
 
-  if (!state || Object.keys(state).length === 0) {
+  if (isEmpty() || openInstructions) {
     return (
       <div className="w-full h-full overflow-scroll no-scrollbar p-7">
         <h1 className="text-3xl font-extrabold dark:text-white">Welcome!</h1>
         <br />
-        <p>
-          <b>{"\u26A0"} Notice:</b> If you want to save your work, don&apos;t
+        <div>
+          <b>&#x26A0; Notice:</b> If you want to save your work, don&apos;t
           forget to hit ctrl/cmd for pc/mac + s. This will save your data to
           your cookies (everything is saved on your computer 🚀). <b>Do not</b>{" "}
           delete the cookies on this website if you want to keep your work.
-        </p>
+        </div>
         <br />
         <h1 className="text-2xl font-extrabold dark:text-white">Inputs</h1>
         <br />
@@ -70,10 +74,6 @@ export const GraphScroller = () => {
             <b>CI = Inflation:</b> sets the CAPY to the inflation set in the
             options.
           </li>
-          <li>
-            <b>Taxed CG:</b> still in progress, please don&apos;t use it for
-            now.
-          </li>
         </ul>
         <br />
         <h1 className="text-2xl font-extrabold dark:text-white">Options</h1>
@@ -86,10 +86,6 @@ export const GraphScroller = () => {
               <li>
                 <b>Inflation:</b> sets the averare yearly inflation, in % per
                 year.
-              </li>
-              <li>
-                <b>Tax Rate:</b> still in progress, please don&apos;t use it for
-                now.
               </li>
             </ul>
           </li>

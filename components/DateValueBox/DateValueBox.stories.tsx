@@ -34,7 +34,6 @@ export const Default = () => {
     "Contribution IPY (%)": 5,
     "APY (%)": 5,
     Type: "beep",
-    "Taxed CG": false,
   };
 
   const [data, setData] = useState<InputValue>(initial);

@@ -68,14 +68,6 @@ export const DateValueBox = ({
         },
         defaultValue: value["Contribution IPY (%)"] == inflation,
       },
-      {
-        label: "Taxed CG",
-        onChange: (e: any) => {
-          updateValue("Taxed CG", !value["Taxed CG"]);
-          updatePage();
-        },
-        defaultValue: value["Taxed CG"],
-      },
     ],
   ];
 
@@ -104,10 +96,7 @@ export const DateValueBox = ({
 
   const renderCheckBoxes = () =>
     checkboxes.map((block, i) => (
-      <div
-        className="flex flex-col justify-center"
-        key={`chekboxes block ${i}`}
-      >
+      <div className="flex flex-col justify-end" key={`chekboxes block ${i}`}>
         {block.map(({ label, onChange, defaultValue }) => (
           <div className="flex flex-row" key={label}>
             <div className="flex items-center">
