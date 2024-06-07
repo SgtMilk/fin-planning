@@ -25,7 +25,7 @@ export default meta;
 
 export const Default = () => {
   return (
-    <InputValueProvider>
+    <InputValueProvider page="beep">
       <Child />
     </InputValueProvider>
   );

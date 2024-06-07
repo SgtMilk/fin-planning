@@ -1,11 +1,17 @@
 <div className="w-full h-full overflow-scroll no-scrollbar p-7">
-    <h1 className="text-3xl font-extrabold dark:text-white">Welcome!</h1>
+    <h1 className="text-3xl font-extrabold dark:text-white">Fin-Planning</h1>
+    <p>The following is the manual to the web-app:</p>
     <div>
         <b>&#x26A0; Notice:</b> If you want to save your work, don&apos;t
         forget to hit ctrl/cmd for pc/mac + s. This will save your data to
         your cookies (everything is saved on your computer 🚀). <b>Do not</b>
         delete the cookies on this website if you want to keep your work.
     </div>
+    <h2 className="text-2xl font-extrabold dark:text-white">Pages</h2>
+    <p>
+        Pages help you organise your different calculations. Each page is an
+        isolated environment, with it&apos;s own inputs and options.
+    </p>
     <h2 className="text-2xl font-extrabold dark:text-white">Inputs</h2>
     <p>
         You can start by adding categories and values in the Inputs tab on the

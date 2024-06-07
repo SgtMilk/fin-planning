@@ -9,11 +9,11 @@ import {
 } from "@/data";
 import { useState } from "react";
 
-export default function Home() {
+export default function Home({ params }: { params: { id: string } }) {
   return (
     <main className="h-screen w-screen overflow-hidden">
-      <InputValueProvider>
-        <OptionProvider>
+      <InputValueProvider page={params.id ? params.id[0] : null}>
+        <OptionProvider page={params.id ? params.id[0] : null}>
           <ProvidedHome />
         </OptionProvider>
       </InputValueProvider>

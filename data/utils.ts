@@ -8,13 +8,41 @@ export const getCurMonth = (monthOffset: number = 0) => {
   return `${year}-${month < 10 ? "0" : ""}${month}`;
 };
 
-export const getCookies = (name: string) => {
-  if (typeof window === "undefined") return {};
+export const getCookies = (page: string | null, name: string) => {
+  if (typeof window === "undefined" || page === null) return {};
 
-  const cookieStringValue = Cookies.get(name);
-  return cookieStringValue === undefined ? {} : JSON.parse(cookieStringValue);
+  const cookieStringValue = Cookies.get(page);
+
+  if (!cookieStringValue) return {};
+
+  const parsedCookies = JSON.parse(cookieStringValue);
+
+  if (!parsedCookies || !parsedCookies[name]) return {};
+
+  return parsedCookies[name];
 };
 
-export const setCookies = (name: string, value: object) => {
-  Cookies.set(name, JSON.stringify(value));
+export const setCookies = (page: string, name: string, value: object) => {
+  if (typeof window === "undefined" || page === null) return {};
+
+  const cookieStringValue = Cookies.get(page);
+  if (!cookieStringValue) {
+    Cookies.set(page, JSON.stringify({ [name]: value }));
+    return;
+  }
+  const parsedCookies = JSON.parse(cookieStringValue);
+  parsedCookies[name] = value;
+
+  Cookies.set(page, JSON.stringify(parsedCookies));
+};
+
+export const deletePageCookies = (page: string) => {
+  if (typeof window === "undefined" || page === null) return {};
+
+  Cookies.remove(page);
+};
+
+export const getAllPages = () => {
+  if (typeof window === "undefined") return [];
+  return Object.keys(Cookies.get());
 };

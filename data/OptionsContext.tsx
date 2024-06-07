@@ -8,7 +8,7 @@ import {
   useEffect,
 } from "react";
 import { useInputValueContext } from ".";
-import { getCookies, getCurMonth, setCookies } from "./utils";
+import { getAllPages, getCookies, getCurMonth, setCookies } from "./utils";
 
 export type Option = any;
 
@@ -67,6 +67,7 @@ interface ContextFunctions {
   getBalance: (isPositive: boolean) => { [key: string]: number };
   saveOptionsContext: () => void;
   checkOptionsChange: () => boolean;
+  pageIsSet: () => boolean;
   state: OptionStore;
 }
 
@@ -138,11 +139,17 @@ const OptionsReducer = (
   }
 };
 
-export const OptionProvider = ({ children }: { children: ReactNode }) => {
+export const OptionProvider = ({
+  children,
+  page,
+}: {
+  children: ReactNode;
+  page: string | null;
+}) => {
   const { getInvestmentInputValueKeys, modifyInflation } =
     useInputValueContext();
 
-  const cookies = getCookies("Options");
+  const cookies = getCookies(page, "Options");
 
   const investmentKeys = getInvestmentInputValueKeys();
   const fixedStore = fixInitialStore(cookies, investmentKeys);
@@ -192,12 +199,19 @@ export const OptionProvider = ({ children }: { children: ReactNode }) => {
     },
 
     saveOptionsContext: () => {
-      setCookies("Options", state);
+      if (!page) return;
+      setCookies(page, "Options", state);
     },
 
     checkOptionsChange: () => {
-      const cookies = getCookies("Options");
+      const cookies = getCookies(page, "Options");
       return JSON.stringify(cookies) !== JSON.stringify(state);
+    },
+
+    pageIsSet: () => {
+      if (page === null) return false;
+      if (!getAllPages().includes(page)) setCookies(page, "temp", {});
+      return true;
     },
 
     state,

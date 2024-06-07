@@ -1,66 +1,29 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { ConnectedDateValueBox } from "../../DateValueBox/ConnectedDateValueBox";
 import { useInputValueContext } from "@/data";
 import { AddIcon, CaretIcon, DropTarget, EditIcon } from "../../Base";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { TypeInput } from "@/components/Base";
 
 export const BoxScroller = () => {
-  const [ready, setReady] = useState<boolean>();
   const { getTypes, addEmptyInputValue } = useInputValueContext();
   const sections = getTypes().sort((a, b) =>
     a.localeCompare(b, undefined, { sensitivity: "case" })
   );
 
-  const newCategory = useRef<string>("");
+  const addCategory = (input: string) => {
+    if (input == "") return;
 
-  const addCategory = () => {
-    if (newCategory.current == "") return;
-
-    addEmptyInputValue(newCategory.current);
-
-    // clearing the input
-    const input = document.getElementById("newCategoryInput");
-    if (input) (input as unknown as { value: string }).value = "";
-    newCategory.current = "";
+    addEmptyInputValue(input);
   };
-
-  useEffect(() => {
-    if (!ready) setReady(true);
-  });
 
   return (
     <div>
       <DndProvider backend={HTML5Backend}>
-        <div className="flex align-center justify-center px-1 py-5 bg-slate-300 dark:bg-slate-950 h-[5.5rem]">
-          {ready ? (
-            <form
-              className="flex flex-row justify-between align-center w-96 px-6"
-              onSubmit={(e: any) => e.preventDefault()}
-            >
-              <input
-                className="bg-slate-50 border border-slate-300 text-slate-900 mr-6 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-900 dark:border-slate-700 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                type="text"
-                id="newCategoryInput"
-                onChange={(e: any) => {
-                  newCategory.current = e.target.value;
-                }}
-              />
-              <button
-                className="bg-cyan-700 hover:bg-cyan-900 text-white font-bold py-2 px-4 rounded whitespace-nowrap"
-                onClick={addCategory}
-              >
-                Add Category
-              </button>
-            </form>
-          ) : (
-            <p className="flex align-center justify-center font-bold text-lg m-auto">
-              Loading...
-            </p>
-          )}
-        </div>
+        <TypeInput buttonName="Add Category" inputFunc={addCategory} />
 
         <div className="overflow-y-scroll no-scrollbar h-[calc(100%-5.5rem)]">
           {sections.map((section) => (

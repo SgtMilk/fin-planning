@@ -3,6 +3,7 @@ import { useOptionContext } from "./OptionsContext";
 
 export * from "./InputValueContext";
 export * from "./OptionsContext";
+export * from "./utils";
 
 export const useSaveContexts = () => {
   const { saveInputValueContext } = useInputValueContext();

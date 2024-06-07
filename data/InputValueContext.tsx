@@ -162,10 +162,16 @@ const InputValuesReducer = (
   }
 };
 
-export const InputValueProvider = ({ children }: { children: ReactNode }) => {
+export const InputValueProvider = ({
+  children,
+  page,
+}: {
+  children: ReactNode;
+  page: string | null;
+}) => {
   const [state, dispatch] = useReducer(
     InputValuesReducer,
-    getCookies("inputValues")
+    getCookies(page, "inputValues")
   );
 
   const inputValueFunctions = {
@@ -236,11 +242,12 @@ export const InputValueProvider = ({ children }: { children: ReactNode }) => {
       ),
 
     saveInputValueContext: () => {
-      setCookies("inputValues", state);
+      if (!page) return;
+      setCookies(page, "inputValues", state);
     },
 
     checkInputValueChange: () => {
-      const cookies = getCookies("inputValues");
+      const cookies = getCookies(page, "inputValues");
       return JSON.stringify(cookies) !== JSON.stringify(state);
     },
 

@@ -25,6 +25,13 @@ export const GraphScroller = ({
           delete the cookies on this website if you want to keep your work.
         </div>
         <br />
+        <h1 className="text-2xl font-extrabold dark:text-white">Pages</h1>
+        <br />
+        <p>
+          Pages help you organise your different calculations. Each page is an
+          isolated environment, with it&apos;s own inputs and options.
+        </p>
+        <br />
         <h1 className="text-2xl font-extrabold dark:text-white">Inputs</h1>
         <br />
         <p>
