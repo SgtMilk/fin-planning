@@ -34,6 +34,7 @@ export const TypeInput = ({ buttonName, inputFunc }: TypeInputProps) => {
         <button
           className="bg-cyan-700 hover:bg-cyan-900 text-white font-bold py-2 px-4 rounded whitespace-nowrap"
           onClick={() => {
+            if (!input.current || input.current === "") return;
             inputFunc(input.current);
             clearInput();
           }}

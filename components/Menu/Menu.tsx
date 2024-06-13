@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BoxScroller } from "./BoxScroller";
 import { OptionsPanel } from "./OptionsPanel";
 import { useInputValueContext, useOptionContext } from "@/data";
-import { SvgIcon, TypeInput, XIcon } from "../Base";
+import { TypeInput, XIcon } from "../Base";
 import { deletePageCookies, getAllPages, setCookies } from "@/data/utils";
 import { useRouter } from "next/navigation";
 
@@ -15,7 +15,7 @@ enum MenuState {
   Inputs,
 }
 
-export const Menu = ({
+const Menu = ({
   openInstructions,
   setOpenInstructions,
 }: {
@@ -25,19 +25,12 @@ export const Menu = ({
   const { isEmpty } = useInputValueContext();
   const { pageIsSet } = useOptionContext();
 
-  // little hack
-  const [isMounted, setIsMounted] = useState<boolean>(false);
-
   const [menuState, setMenuState] = useState<MenuState>(
     pageIsSet() ? MenuState.Main : MenuState.ScreenSelector
   );
 
-  useEffect(() => setIsMounted(true));
-
   const ChooseState = () => {
     const router = useRouter();
-
-    if (!isMounted) return null;
 
     switch (menuState) {
       case MenuState.ScreenSelector: {
@@ -76,7 +69,7 @@ export const Menu = ({
   };
 
   const ReturnButton = () => {
-    if (!isMounted || menuState === MenuState.ScreenSelector) return <div />;
+    if (menuState === MenuState.ScreenSelector) return <div />;
 
     const returnState =
       menuState === MenuState.Main ? MenuState.ScreenSelector : MenuState.Main;
@@ -168,8 +161,10 @@ export const Menu = ({
         <p className="text-2xl text-white">Fin-Planning</p>
       </div>
       <div className="w-full h-[calc(100vh-5rem)] overflow-scroll">
-        <ChooseState />
+        {ChooseState()}
       </div>
     </div>
   );
 };
+
+export default Menu;

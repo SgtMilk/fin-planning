@@ -1,6 +1,5 @@
 "use client";
 
-import { Menu, GraphScroller } from "@/components";
 import {
   InputValueProvider,
   OptionProvider,
@@ -8,6 +7,18 @@ import {
   useSaveContexts,
 } from "@/data";
 import { useState } from "react";
+import dynamic from "next/dynamic";
+
+const Menu = dynamic(() => import("../../components/Menu/Menu"), {
+  ssr: false,
+});
+
+const GraphScroller = dynamic(
+  () => import("../../components/GraphScroller/GraphScroller"),
+  {
+    ssr: false,
+  }
+);
 
 export default function Home({ params }: { params: { id: string } }) {
   return (

@@ -5,11 +5,7 @@ import { InvestmentGraph, MonthlyBalanceGraph } from "./Graphs";
 import { useErrorChecker } from "@/data/errorChecker";
 import { useInputValueContext } from "@/data";
 
-export const GraphScroller = ({
-  openInstructions,
-}: {
-  openInstructions: boolean;
-}) => {
+const GraphScroller = ({ openInstructions }: { openInstructions: boolean }) => {
   const { optionErrors, inputValueErrors, numErrors } = useErrorChecker();
   const { isEmpty } = useInputValueContext();
 
@@ -152,3 +148,5 @@ export const GraphScroller = ({
     );
   }
 };
+
+export default GraphScroller;
