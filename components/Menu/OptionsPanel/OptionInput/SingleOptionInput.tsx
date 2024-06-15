@@ -1,5 +1,6 @@
 "use client";
 
+import { InfoCard, InputWithLabel } from "@/components/common/styles";
 import { OptionKey, getInputType, useOptionContext } from "@/data";
 import React, { useState } from "react";
 
@@ -38,29 +39,22 @@ export const SingleOptionInput = ({
 
   let type = getInputType(label);
 
+  const inputProps = {
+    label,
+    inputProps: {
+      type,
+      value,
+      onChange: (e: any) => {
+        updateValue(e.target.value);
+        updatePage();
+      },
+      ...additionalFields,
+    },
+  };
+
   return (
-    <div
-      className={`m-1 p-6 bg-white border border-slate-200 rounded-lg shadow dark:bg-slate-800 dark:border-slate-700 w-96`}
-    >
-      <div key={label}>
-        <label
-          htmlFor={label}
-          className="block mb-2 text-sm font-medium text-slate-900 dark:text-white"
-        >
-          {label}
-        </label>
-        <input
-          id={label}
-          className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          type={type}
-          value={value}
-          onChange={(e: any) => {
-            updateValue(e.target.value);
-            updatePage();
-          }}
-          {...additionalFields}
-        />
-      </div>
-    </div>
+    <InfoCard isGrid={false}>
+      <InputWithLabel {...inputProps} />
+    </InfoCard>
   );
 };

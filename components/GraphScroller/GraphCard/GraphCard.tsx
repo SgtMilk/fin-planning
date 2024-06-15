@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { isDarkMode } from "../Base";
+import { isDarkMode } from "@/components/common";
 
 export interface GraphCardProps {
   title: string;

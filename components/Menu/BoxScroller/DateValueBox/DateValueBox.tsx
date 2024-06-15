@@ -1,8 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { InputValue, InputValueKey, useOptionContext } from "../../data";
-import { CaretIcon, XIcon } from "../Base";
+import { InputValue, InputValueKey, useOptionContext } from "@/data";
+import { CaretIcon, XIcon } from "@/components/common";
+import {
+  CheckboxInputWithLabel,
+  InfoCard,
+  InputWithLabel,
+} from "@/components/common/styles";
 
 export interface DateValueBoxProps {
   value: InputValue;
@@ -72,59 +77,42 @@ export const DateValueBox = ({
   ];
 
   const renderInputs = () =>
-    inputs.map(({ label, type, additionalFields }) => (
-      <div key={label}>
-        <label
-          htmlFor={label}
-          className="block mb-2 text-sm font-medium text-slate-900 dark:text-white"
-        >
-          {label}
-        </label>
-        <input
-          id={label}
-          className="bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          type={type}
-          value={(value as { [key: string]: any })[label]}
-          onChange={(e: any) => {
+    inputs.map(({ label, type, additionalFields }) => {
+      const props = {
+        key: label,
+        label: label,
+        inputProps: {
+          type,
+          value: (value as { [key: string]: any })[label],
+          onChange: (e: any) => {
             updateValue(label as InputValueKey, e.target.value);
             updatePage();
-          }}
-          {...additionalFields}
-        />
-      </div>
-    ));
+          },
+          ...additionalFields,
+        },
+      };
+      return <InputWithLabel {...props} />;
+    });
 
   const renderCheckBoxes = () =>
     checkboxes.map((block, i) => (
       <div className="flex flex-col justify-end" key={`chekboxes block ${i}`}>
-        {block.map(({ label, onChange, defaultValue }) => (
-          <div className="flex flex-row" key={label}>
-            <div className="flex items-center">
-              <input
-                id={label}
-                className="w-4 h-4"
-                type="checkbox"
-                onChange={onChange}
-                checked={defaultValue}
-              />
-              <label
-                htmlFor={label}
-                className="block text-sm font-medium text-slate-900 dark:text-white pl-3"
-              >
-                {label}
-              </label>
-            </div>
-          </div>
-        ))}
+        {block.map(({ label, onChange, defaultValue }) => {
+          const props = {
+            key: label,
+            label: label,
+            inputProps: {
+              onChange,
+              checked: defaultValue,
+            },
+          };
+          return <CheckboxInputWithLabel {...props} />;
+        })}
       </div>
     ));
 
   return (
-    <div
-      className={`${
-        isOpen ? "grid grid-cols-2" : "flex flex-row justify-between"
-      } gap-6 p-6 bg-white border border-slate-200 rounded-lg shadow dark:bg-slate-800 dark:border-slate-700 w-96`}
-    >
+    <InfoCard isGrid={isOpen}>
       {/* The titlebar of the box */}
       <CaretIcon {...{ isOpen, setIsOpen }} />
       {isOpen ? null : <p>{value.Title}</p>}
@@ -139,6 +127,6 @@ export const DateValueBox = ({
             ...renderCheckBoxes(),
           ]
         : null}
-    </div>
+    </InfoCard>
   );
 };

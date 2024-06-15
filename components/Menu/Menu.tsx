@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { BoxScroller } from "./BoxScroller";
 import { OptionsPanel } from "./OptionsPanel";
 import { useInputValueContext, useOptionContext } from "@/data";
-import { TypeInput, XIcon } from "../Base";
+import { HeaderInput, XIcon } from "../common";
 import { deletePageCookies, getAllPages, setCookies } from "@/data/utils";
 import { useRouter } from "next/navigation";
+import { SectionCard } from "../common/styles";
 
 enum MenuState {
   ScreenSelector,
@@ -37,7 +38,7 @@ const Menu = ({
         const pages = getAllPages();
         return (
           <div>
-            <TypeInput
+            <HeaderInput
               buttonName="Add Page"
               inputFunc={(pageName: string) => {
                 setCookies(pageName, "temp", {});
@@ -87,17 +88,10 @@ const Menu = ({
   };
 
   const Button = ({ to }: { to: MenuState }) => (
-    <button
-      className="border border-slate-300 dark:border-slate-700 p-1"
-      onClick={() => setMenuState(to)}
-    >
-      <div className="px-1 py-5 text-lg">
-        <div className="flex flex-row justify-between w-96 px-6">
-          <div className="h-7 overflow-none">
-            <p>{MenuState[to]}</p>
-          </div>
-        </div>
-      </div>
+    <button onClick={() => setMenuState(to)}>
+      <SectionCard>
+        <p>{MenuState[to]}</p>
+      </SectionCard>
     </button>
   );
 
@@ -106,49 +100,36 @@ const Menu = ({
     const { saveInputValueContext } = useInputValueContext();
     const { saveOptionsContext } = useOptionContext();
     return (
-      <div className="border border-slate-300 dark:border-slate-700 p-1">
-        <div className="px-1 py-5 text-lg">
-          <div className="flex flex-row justify-between w-96 px-6">
-            <button
-              className="h-7 overflow-none"
-              onClick={() => {
-                if (pageIsSet()) {
-                  saveInputValueContext();
-                  saveOptionsContext();
-                }
-                router.push(`/${pageID}`);
-                setMenuState(MenuState.Main);
-              }}
-            >
-              <p>{pageID}</p>
-            </button>
-            <XIcon
-              deleteFunction={() => {
-                deletePageCookies(pageID);
-                router.push("/");
-                router.refresh();
-              }}
-            />
-          </div>
-        </div>
-      </div>
+      <SectionCard>
+        <button
+          className="h-7 overflow-none"
+          onClick={() => {
+            if (pageIsSet()) {
+              saveInputValueContext();
+              saveOptionsContext();
+            }
+            router.push(`/${pageID}`);
+            setMenuState(MenuState.Main);
+          }}
+        >
+          <p>{pageID}</p>
+        </button>
+        <XIcon
+          deleteFunction={() => {
+            deletePageCookies(pageID);
+            router.push("/");
+            router.refresh();
+          }}
+        />
+      </SectionCard>
     );
   };
 
   const InstructionsButton = () => (
-    <button
-      className="border border-slate-300 dark:border-slate-700 p-1"
-      onClick={() => setOpenInstructions()}
-    >
-      <div className="px-1 py-5 text-lg">
-        <div className="flex flex-row justify-between w-96 px-6">
-          <div className="h-7 overflow-none">
-            <p>
-              {openInstructions ? "Close Instructions" : "Open Instructions"}
-            </p>
-          </div>
-        </div>
-      </div>
+    <button onClick={() => setOpenInstructions()}>
+      <SectionCard>
+        <p>{openInstructions ? "Close Instructions" : "Open Instructions"}</p>
+      </SectionCard>
     </button>
   );
 

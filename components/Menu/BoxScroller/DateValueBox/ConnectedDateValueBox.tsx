@@ -1,7 +1,7 @@
-import { InputValueKey, useInputValueContext } from "../../data";
+import { InputValueKey, useInputValueContext } from "@/data";
 import React from "react";
 import { DateValueBox } from "./DateValueBox";
-import { DragObject } from "../Base";
+import { DragObject } from "@/components/common";
 
 export interface ConnectedDateValueBoxProps {
   id: string;

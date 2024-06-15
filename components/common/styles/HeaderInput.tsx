@@ -1,11 +1,12 @@
 import React, { useRef } from "react";
+import { Input } from ".";
 
-export interface TypeInputProps {
+export interface HeaderInputProps {
   buttonName: string;
   inputFunc: (input: string) => void;
 }
 
-export const TypeInput = ({ buttonName, inputFunc }: TypeInputProps) => {
+export const HeaderInput = ({ buttonName, inputFunc }: HeaderInputProps) => {
   const input = useRef<string>("");
 
   const inputID = `input-${buttonName}`;
@@ -23,8 +24,7 @@ export const TypeInput = ({ buttonName, inputFunc }: TypeInputProps) => {
         className="flex flex-row justify-between align-center w-96 px-6"
         onSubmit={(e: any) => e.preventDefault()}
       >
-        <input
-          className="bg-slate-50 border border-slate-300 text-slate-900 mr-6 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-slate-900 dark:border-slate-700 dark:placeholder-slate-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+        <Input
           type="text"
           id={inputID}
           onChange={(e: any) => {

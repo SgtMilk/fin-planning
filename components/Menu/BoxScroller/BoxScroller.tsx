@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { ConnectedDateValueBox } from "../../DateValueBox/ConnectedDateValueBox";
+import { ConnectedDateValueBox } from "./DateValueBox/ConnectedDateValueBox";
 import { useInputValueContext } from "@/data";
-import { AddIcon, CaretIcon, DropTarget, EditIcon } from "../../Base";
+import { AddIcon, CaretIcon, DropTarget, EditIcon } from "../../common";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { TypeInput } from "@/components/Base";
+import { HeaderInput } from "@/components/common";
+import { SectionCard } from "@/components/common/styles";
 
 export const BoxScroller = () => {
   const { getTypes, addEmptyInputValue } = useInputValueContext();
@@ -23,7 +24,7 @@ export const BoxScroller = () => {
   return (
     <div>
       <DndProvider backend={HTML5Backend}>
-        <TypeInput buttonName="Add Category" inputFunc={addCategory} />
+        <HeaderInput buttonName="Add Category" inputFunc={addCategory} />
 
         <div className="overflow-y-scroll no-scrollbar h-[calc(100%-5.5rem)]">
           {sections.map((section) => (
@@ -55,49 +56,48 @@ const BoxScrollerSection = ({ title }: BoxScrollerSectionProps) => {
 
   return (
     <DropTarget type={title}>
-      <div className="border border-slate-200 dark:border-slate-800">
-        <div className="px-1 py-5 text-lg">
-          <div className="flex flex-row justify-between w-96 px-6">
-            <div className="w-10">
-              <CaretIcon {...{ isOpen, setIsOpen }} />
-            </div>
-
-            <form
-              className="h-7 overflow-none"
-              onSubmit={(e: any) => {
-                editFunction();
-                return e.preventDefault();
-              }}
-            >
-              {isEdit ? (
-                <input
-                  defaultValue={title}
-                  className="text-center"
-                  onChange={(e: any) => {
-                    titleRef.current = e.target.value;
-                  }}
-                />
-              ) : (
-                <p>{title}</p>
-              )}
-            </form>
-
-            <div className="flex flex-row">
-              <div className={`pr-3${isEdit ? " mt-1" : ""}`}>
-                <EditIcon isEdit={isEdit} editFunction={editFunction} />
-              </div>
-              <AddIcon addFunction={() => addEmptyInputValue(title)} />
-            </div>
-          </div>
+      <SectionCard
+        addDrop={
+          isOpen
+            ? keys.map((key) => (
+                <div key={key}>
+                  <ConnectedDateValueBox id={key} />
+                </div>
+              ))
+            : null
+        }
+      >
+        <div className="w-10">
+          <CaretIcon {...{ isOpen, setIsOpen }} />
         </div>
-        {isOpen
-          ? keys.map((key) => (
-              <div key={key} className="p-1">
-                <ConnectedDateValueBox id={key} />
-              </div>
-            ))
-          : null}
-      </div>
+
+        <form
+          className="h-7 overflow-none"
+          onSubmit={(e: any) => {
+            editFunction();
+            return e.preventDefault();
+          }}
+        >
+          {isEdit ? (
+            <input
+              defaultValue={title}
+              className="text-center"
+              onChange={(e: any) => {
+                titleRef.current = e.target.value;
+              }}
+            />
+          ) : (
+            <p>{title}</p>
+          )}
+        </form>
+
+        <div className="flex flex-row">
+          <div className={`pr-3${isEdit ? " mt-1" : ""}`}>
+            <EditIcon isEdit={isEdit} editFunction={editFunction} />
+          </div>
+          <AddIcon addFunction={() => addEmptyInputValue(title)} />
+        </div>
+      </SectionCard>
     </DropTarget>
   );
 };

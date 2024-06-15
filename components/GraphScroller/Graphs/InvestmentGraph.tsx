@@ -1,4 +1,4 @@
-import { GraphCard } from "@/components/GraphCard";
+import { GraphCard } from "@/components/GraphScroller/GraphCard";
 import { useGetInvestmentBalanceSheet } from "@/data/processingFunctions";
 import React from "react";
 import { useProcessDataFunctions } from "./utils";

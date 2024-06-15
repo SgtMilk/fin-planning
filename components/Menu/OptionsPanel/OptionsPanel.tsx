@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { CaretIcon, MenuIcon } from "../../Base";
+import { CaretIcon, MenuIcon } from "../../common";
 import {
   ConnectedSingleOptionInput,
   ResultingBalanceOptionInput,
 } from "./OptionInput";
+import { SectionCard } from "@/components/common/styles";
 
 export const OptionsPanel = () => {
   return (
@@ -41,23 +42,16 @@ const OptionsPanelSection = ({ title, children }: OptionsPanelSectionProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
-    <div className="border border-slate-300 dark:border-slate-700 p-1">
-      <div className="px-1 py-5 text-lg">
-        <div className="flex flex-row justify-between w-96 px-6">
-          <div className="w-5">
-            <CaretIcon {...{ isOpen, setIsOpen }} />
-          </div>
-
-          <div className="h-7 overflow-none">
-            <p>{title}</p>
-          </div>
-
-          <div className="flex flex-row w-5"></div>
-        </div>
+    <SectionCard addDrop={isOpen ? children : null}>
+      <div className="w-5">
+        <CaretIcon {...{ isOpen, setIsOpen }} />
       </div>
-      <div className="w-full flex justify-center">
-        {isOpen ? children : null}
+
+      <div className="h-7 overflow-none">
+        <p>{title}</p>
       </div>
-    </div>
+
+      <div className="flex flex-row w-5"></div>
+    </SectionCard>
   );
 };
