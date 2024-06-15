@@ -79,7 +79,6 @@ export const DateValueBox = ({
   const renderInputs = () =>
     inputs.map(({ label, type, additionalFields }) => {
       const props = {
-        key: label,
         label: label,
         inputProps: {
           type,
@@ -91,7 +90,7 @@ export const DateValueBox = ({
           ...additionalFields,
         },
       };
-      return <InputWithLabel {...props} />;
+      return <InputWithLabel {...props} key={label} />;
     });
 
   const renderCheckBoxes = () =>
@@ -99,14 +98,13 @@ export const DateValueBox = ({
       <div className="flex flex-col justify-end" key={`chekboxes block ${i}`}>
         {block.map(({ label, onChange, defaultValue }) => {
           const props = {
-            key: label,
             label: label,
             inputProps: {
               onChange,
               checked: defaultValue,
             },
           };
-          return <CheckboxInputWithLabel {...props} />;
+          return <CheckboxInputWithLabel {...props} key={label} />;
         })}
       </div>
     ));

@@ -1,11 +1,6 @@
 import type { Meta } from "@storybook/react";
 
-import {
-  InputValue,
-  InputValueKey,
-  InputValueProvider,
-  useInputValueContext,
-} from "../../data";
+import { InputValue, InputValueKey } from "@/data";
 import { DateValueBox } from "./DateValueBox";
 import { useState } from "react";
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

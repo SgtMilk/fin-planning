@@ -1,10 +1,6 @@
 import type { Meta } from "@storybook/react";
 
-import {
-  InputValue,
-  InputValueProvider,
-  useInputValueContext,
-} from "../../../data";
+import { InputValue, InputValueProvider, useInputValueContext } from "@/data";
 import { BoxScroller } from "./BoxScroller";
 import { useEffect, useState } from "react";
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -35,65 +31,66 @@ const Child = () => {
   const [isReady, setIsReady] = useState<boolean>(false);
 
   const { setInputValues } = useInputValueContext();
-  const values: Array<InputValue> = [
-    {
-      Title: "Groceries",
-      "Current Value": 3,
-      "Contribution / Month": 4,
-      "Start Date": "2023-06",
-      "End Date": "2024-06",
-      "Contribution IPY (%)": 5,
-      "APY (%)": 5,
-      Type: "Investment",
-    },
-    {
-      Title: "Groceries",
-      "Current Value": 3,
-      "Contribution / Month": 4,
-      "Start Date": "2023-06",
-      "End Date": "2024-06",
-      "Contribution IPY (%)": 5,
-      "APY (%)": 5,
-      Type: "Investment",
-    },
-    {
-      Title: "Groceries",
-      "Current Value": 3,
-      "Contribution / Month": 4,
-      "Start Date": "2023-06",
-      "End Date": "2024-06",
-      "Contribution IPY (%)": 5,
-      "APY (%)": 5,
-      Type: "Expense",
-    },
-    {
-      Title: "Groceries",
-      "Current Value": 3,
-      "Contribution / Month": 4,
-      "Start Date": "2023-06",
-      "End Date": "2024-06",
-      "Contribution IPY (%)": 5,
-      "APY (%)": 5,
-      Type: "Expense",
-    },
-    {
-      Title: "Groceries",
-      "Current Value": 3,
-      "Contribution / Month": 4,
-      "Start Date": "2023-06",
-      "End Date": "2024-06",
-      "Contribution IPY (%)": 5,
-      "APY (%)": 5,
-      Type: "Expense",
-    },
-  ];
 
   useEffect(() => {
     if (!isReady) {
+      const values: Array<InputValue> = [
+        {
+          Title: "Groceries",
+          "Current Value": 3,
+          "Contribution / Month": 4,
+          "Start Date": "2023-06",
+          "End Date": "2024-06",
+          "Contribution IPY (%)": 5,
+          "APY (%)": 5,
+          Type: "Investment",
+        },
+        {
+          Title: "Groceries",
+          "Current Value": 3,
+          "Contribution / Month": 4,
+          "Start Date": "2023-06",
+          "End Date": "2024-06",
+          "Contribution IPY (%)": 5,
+          "APY (%)": 5,
+          Type: "Investment",
+        },
+        {
+          Title: "Groceries",
+          "Current Value": 3,
+          "Contribution / Month": 4,
+          "Start Date": "2023-06",
+          "End Date": "2024-06",
+          "Contribution IPY (%)": 5,
+          "APY (%)": 5,
+          Type: "Expense",
+        },
+        {
+          Title: "Groceries",
+          "Current Value": 3,
+          "Contribution / Month": 4,
+          "Start Date": "2023-06",
+          "End Date": "2024-06",
+          "Contribution IPY (%)": 5,
+          "APY (%)": 5,
+          Type: "Expense",
+        },
+        {
+          Title: "Groceries",
+          "Current Value": 3,
+          "Contribution / Month": 4,
+          "Start Date": "2023-06",
+          "End Date": "2024-06",
+          "Contribution IPY (%)": 5,
+          "APY (%)": 5,
+          Type: "Expense",
+        },
+      ];
+
       setInputValues(values);
       setIsReady(true);
     }
-  });
+  }, [isReady, setInputValues]);
 
   return isReady ? <BoxScroller /> : null;
 };

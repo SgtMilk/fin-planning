@@ -3,11 +3,16 @@
 import React, { useRef, useState } from "react";
 import { ConnectedDateValueBox } from "./DateValueBox/ConnectedDateValueBox";
 import { useInputValueContext } from "@/data";
-import { AddIcon, CaretIcon, DropTarget, EditIcon } from "../../common";
+import {
+  AddIcon,
+  CaretIcon,
+  DropTarget,
+  EditIcon,
+  HeaderInput,
+  SectionCard,
+} from "@/components/common";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { HeaderInput } from "@/components/common";
-import { SectionCard } from "@/components/common/styles";
 
 export const BoxScroller = () => {
   const { getTypes, addEmptyInputValue } = useInputValueContext();

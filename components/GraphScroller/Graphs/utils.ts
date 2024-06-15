@@ -1,4 +1,4 @@
-import { LineProps } from "@/components/GraphCard";
+import { LineProps } from "@/components/GraphScroller/GraphCard";
 import { useOptionContext } from "@/data";
 import { BalanceSheet } from "@/data/processingFunctions";
 import { getCurMonth } from "@/data/utils";
