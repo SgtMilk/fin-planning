@@ -141,7 +141,7 @@ const Menu = ({
         <ReturnButton />
         <p className="text-2xl text-white">Fin-Planning</p>
       </div>
-      <div className="w-full h-[calc(100vh-5rem)] overflow-scroll">
+      <div className="w-full h-[calc(100vh-5rem)] overflow-scroll no-scrollbar">
         {ChooseState()}
       </div>
     </div>
