@@ -87,7 +87,7 @@ const GraphScroller = ({ openInstructions }: { openInstructions: boolean }) => {
             <br />
             <ul className="list-disc px-5">
               <li>
-                <b>Inflation:</b> sets the averare yearly inflation, in % per
+                <b>Inflation:</b> sets the average yearly inflation, in % per
                 year.
               </li>
             </ul>

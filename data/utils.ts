@@ -46,3 +46,11 @@ export const getAllPages = () => {
   if (typeof window === "undefined") return [];
   return Object.keys(Cookies.get());
 };
+
+export const transformToURL = (name:string) => {
+  return encodeURIComponent(name)
+}
+
+export const transformFromURL = (url:string) => {
+  return decodeURIComponent(url)
+}

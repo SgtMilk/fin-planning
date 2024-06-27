@@ -5,7 +5,13 @@ import { BoxScroller } from "./BoxScroller";
 import { OptionsPanel } from "./OptionsPanel";
 import { useInputValueContext, useOptionContext } from "@/data";
 import { HeaderInput, XIcon } from "../common";
-import { deletePageCookies, getAllPages, setCookies } from "@/data/utils";
+import {
+  deletePageCookies,
+  getAllPages,
+  setCookies,
+  transformFromURL,
+  transformToURL,
+} from "@/data/utils";
 import { useRouter } from "next/navigation";
 import { SectionCard } from "../common/styles";
 
@@ -41,8 +47,9 @@ const Menu = ({
             <HeaderInput
               buttonName="Add Page"
               inputFunc={(pageName: string) => {
-                setCookies(pageName, "temp", {});
-                router.push(`/${pageName}`);
+                const url = transformToURL(pageName);
+                setCookies(url, "temp", {});
+                router.push(`/${url}`);
               }}
             />
             {pages.map((name) => (
@@ -112,7 +119,7 @@ const Menu = ({
             setMenuState(MenuState.Main);
           }}
         >
-          <p>{pageID}</p>
+          <p>{transformFromURL(pageID)}</p>
         </button>
         <XIcon
           deleteFunction={() => {

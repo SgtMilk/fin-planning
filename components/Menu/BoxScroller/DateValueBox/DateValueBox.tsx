@@ -2,7 +2,12 @@
 
 import React, { useState } from "react";
 import { InputValue, InputValueKey, useOptionContext } from "@/data";
-import { CaretIcon, XIcon } from "@/components/common";
+import {
+  CaretIcon,
+  DragIcon,
+  XIcon,
+  useDragRefContext,
+} from "@/components/common";
 import {
   CheckboxInputWithLabel,
   InfoCard,
@@ -22,6 +27,8 @@ export const DateValueBox = ({
 }: DateValueBoxProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(value.Title === "New Value");
   const [trigger, setTrigger] = useState<boolean>(false);
+
+  const dragRef = useDragRefContext();
 
   const { getOption } = useOptionContext();
   const inflation = getOption("Inflation");
@@ -113,8 +120,20 @@ export const DateValueBox = ({
     <InfoCard isGrid={isOpen}>
       {/* The titlebar of the box */}
       <CaretIcon {...{ isOpen, setIsOpen }} />
-      {isOpen ? null : <p>{value.Title}</p>}
+      {isOpen ? null : (
+        <div
+          className="w-full h-full flex align-center justify-center"
+          ref={dragRef}
+        >
+          <p>{value.Title}</p>
+        </div>
+      )}
       <div className="flex justify-end">
+        {isOpen ? (
+          <div ref={dragRef} className="px-3">
+            <DragIcon />
+          </div>
+        ) : null}
         <XIcon {...{ deleteFunction }} />
       </div>
 
