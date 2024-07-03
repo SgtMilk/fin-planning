@@ -11,6 +11,7 @@ import {
   setCookies,
   transformFromURL,
   transformToURL,
+  useSavePage,
 } from "@/data/utils";
 import { useRouter } from "next/navigation";
 import { SectionCard } from "../common/styles";
@@ -31,6 +32,7 @@ const Menu = ({
 }) => {
   const { isEmpty } = useInputValueContext();
   const { pageIsSet } = useOptionContext();
+  const savePage = useSavePage();
 
   const [menuState, setMenuState] = useState<MenuState>(
     pageIsSet() ? MenuState.Main : MenuState.ScreenSelector
@@ -47,6 +49,8 @@ const Menu = ({
             <HeaderInput
               buttonName="Add Page"
               inputFunc={(pageName: string) => {
+                if (pageIsSet()) savePage();
+
                 const url = transformToURL(pageName);
                 setCookies(url, "temp", {});
                 router.push(`/${url}`);
@@ -104,17 +108,13 @@ const Menu = ({
 
   const RouterButton = ({ pageID }: { pageID: string }) => {
     const router = useRouter();
-    const { saveInputValueContext } = useInputValueContext();
-    const { saveOptionsContext } = useOptionContext();
     return (
       <SectionCard>
         <button
           className="h-7 overflow-none"
           onClick={() => {
-            if (pageIsSet()) {
-              saveInputValueContext();
-              saveOptionsContext();
-            }
+            if (pageIsSet()) savePage();
+
             router.push(`/${pageID}`);
             setMenuState(MenuState.Main);
           }}

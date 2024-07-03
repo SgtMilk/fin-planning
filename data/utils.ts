@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { useInputValueContext, useOptionContext } from ".";
 
 export const getCurMonth = (monthOffset: number = 0) => {
   const curDate = new Date();
@@ -44,7 +45,7 @@ export const deletePageCookies = (page: string) => {
 
 export const getAllPages = () => {
   if (typeof window === "undefined") return [];
-  return Object.keys(Cookies.get());
+  return Object.keys(Cookies.get()).sort();
 };
 
 export const transformToURL = (name:string) => {
@@ -54,3 +55,48 @@ export const transformToURL = (name:string) => {
 export const transformFromURL = (url:string) => {
   return decodeURIComponent(url)
 }
+
+export const useSavePage = () => {
+  const { saveInputValueContext } = useInputValueContext();
+  const { saveOptionsContext } = useOptionContext();
+
+  return () => {
+    saveInputValueContext();
+    saveOptionsContext();
+  }
+}
+
+export const useAddNotice = () => {
+  const savePage = useSavePage()
+  const { getPageID } = useOptionContext();
+  const page = getPageID();
+
+  if (typeof window === "undefined") return;
+
+  window.addEventListener("beforeunload", function (event) {
+    if(!page) return;
+    // check if deleted
+    const cookiePresent = Cookies.get(page);
+    if(cookiePresent) savePage()
+  });
+};
+
+export const useSaveContexts = () => {
+  const savePage = useSavePage()
+
+  if (typeof document === "undefined") return;
+
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      if (
+        event.keyCode == 83 &&
+        (navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey)
+      ) {
+        event.preventDefault();
+        savePage();
+      }
+    },
+    false
+  );
+};

@@ -68,6 +68,7 @@ interface ContextFunctions {
   saveOptionsContext: () => void;
   checkOptionsChange: () => boolean;
   pageIsSet: () => boolean;
+  getPageID: () => string | null;
   state: OptionStore;
 }
 
@@ -213,6 +214,8 @@ export const OptionProvider = ({
       if (!getAllPages().includes(page)) setCookies(page, "temp", {});
       return true;
     },
+
+    getPageID: () => page,
 
     state,
   };
