@@ -1,51 +1,9 @@
-import Cookies from "js-cookie";
-import { useInputValueContext, useOptionContext } from ".";
-
 export const getCurMonth = (monthOffset: number = 0) => {
   const curDate = new Date();
   const fullMonth = curDate.getMonth() + monthOffset;
   const year = Math.floor(fullMonth / 12) + curDate.getFullYear();
   const month = (fullMonth % 12) + 1;
   return `${year}-${month < 10 ? "0" : ""}${month}`;
-};
-
-export const getCookies = (page: string | null, name: string) => {
-  if (typeof window === "undefined" || page === null) return {};
-
-  const cookieStringValue = Cookies.get(page);
-
-  if (!cookieStringValue) return {};
-
-  const parsedCookies = JSON.parse(cookieStringValue);
-
-  if (!parsedCookies || !parsedCookies[name]) return {};
-
-  return parsedCookies[name];
-};
-
-export const setCookies = (page: string, name: string, value: object) => {
-  if (typeof window === "undefined" || page === null) return {};
-
-  const cookieStringValue = Cookies.get(page);
-  if (!cookieStringValue) {
-    Cookies.set(page, JSON.stringify({ [name]: value }));
-    return;
-  }
-  const parsedCookies = JSON.parse(cookieStringValue);
-  parsedCookies[name] = value;
-
-  Cookies.set(page, JSON.stringify(parsedCookies));
-};
-
-export const deletePageCookies = (page: string) => {
-  if (typeof window === "undefined" || page === null) return {};
-
-  Cookies.remove(page);
-};
-
-export const getAllPages = () => {
-  if (typeof window === "undefined") return [];
-  return Object.keys(Cookies.get()).sort();
 };
 
 export const transformToURL = (name:string) => {
@@ -56,47 +14,3 @@ export const transformFromURL = (url:string) => {
   return decodeURIComponent(url)
 }
 
-export const useSavePage = () => {
-  const { saveInputValueContext } = useInputValueContext();
-  const { saveOptionsContext } = useOptionContext();
-
-  return () => {
-    saveInputValueContext();
-    saveOptionsContext();
-  }
-}
-
-export const useAddNotice = () => {
-  const savePage = useSavePage()
-  const { getPageID } = useOptionContext();
-  const page = getPageID();
-
-  if (typeof window === "undefined") return;
-
-  window.addEventListener("beforeunload", function (event) {
-    if(!page) return;
-    // check if deleted
-    const cookiePresent = Cookies.get(page);
-    if(cookiePresent) savePage()
-  });
-};
-
-export const useSaveContexts = () => {
-  const savePage = useSavePage()
-
-  if (typeof document === "undefined") return;
-
-  document.addEventListener(
-    "keydown",
-    (event) => {
-      if (
-        event.keyCode == 83 &&
-        (navigator.platform.match("Mac") ? event.metaKey : event.ctrlKey)
-      ) {
-        event.preventDefault();
-        savePage();
-      }
-    },
-    false
-  );
-};

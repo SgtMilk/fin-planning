@@ -11,8 +11,6 @@ const GraphScroller = ({ openInstructions }: { openInstructions: boolean }) => {
   const { isEmpty } = useInputValueContext();
   const [manual, setManual] = useState<string>("")
 
-  console.log(manual)
-
   useEffect(() => {
     fetch("README.md")
       .then((res) => res.text())
@@ -48,9 +46,9 @@ const GraphScroller = ({ openInstructions }: { openInstructions: boolean }) => {
   } else {
     const graphs = [MonthlyBalanceGraph, InvestmentGraph];
     return (
-      <div className="w-full h-full overflow-scroll no-scrollbar fadeIn">
+      <div className="w-full h-full overflow-scroll no-scrollbar fadeIn flex flex-row flex-wrap">
         {graphs.map((Element, i) => (
-          <div className="w-full h-full" key={`graph-${i}`}>
+          <div className="w-full h-1/2" key={`graph-${i}`}>
             <Element />
           </div>
         ))}

@@ -7,8 +7,9 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { useInputValueContext } from ".";
-import { getAllPages, getCookies, getCurMonth, setCookies } from "./utils";
+import { getAllPages, getStorage, setStorage } from "./localStorage";
+import {useInputValueContext} from "./InputValueContext"
+import {getCurMonth} from "./utils"
 
 export type Option = any;
 
@@ -150,7 +151,7 @@ export const OptionProvider = ({
   const { getInvestmentInputValueKeys, modifyInflation } =
     useInputValueContext();
 
-  const cookies = getCookies(page, "Options");
+  const cookies = getStorage(page, "Options");
 
   const investmentKeys = getInvestmentInputValueKeys();
   const fixedStore = fixInitialStore(cookies, investmentKeys);
@@ -201,17 +202,17 @@ export const OptionProvider = ({
 
     saveOptionsContext: () => {
       if (!page) return;
-      setCookies(page, "Options", state);
+      setStorage(page, "Options", state);
     },
 
     checkOptionsChange: () => {
-      const cookies = getCookies(page, "Options");
+      const cookies = getStorage(page, "Options");
       return JSON.stringify(cookies) !== JSON.stringify(state);
     },
 
     pageIsSet: () => {
       if (page === null) return false;
-      if (!getAllPages().includes(page)) setCookies(page, "temp", {});
+      if (!getAllPages().includes(page)) setStorage(page, "temp", {});
       return true;
     },
 

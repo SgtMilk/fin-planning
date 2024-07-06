@@ -65,10 +65,10 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis width={80} />
-        <Tooltip {...tooltipStyle} />
-        <Legend />
+        <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+        <YAxis width={getGraphYWidth(data)} tick={{ fontSize: 12 }} />
+        <Tooltip {...tooltipStyle} wrapperStyle={{ fontSize: 12 }} />
+        <Legend wrapperStyle={{ fontSize: 12 }} />
         {dataKeys.map((dataKey, i) => (
           <Line
             key={dataKey}
@@ -87,11 +87,29 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
   return (
     <div className="w-full h-full p-5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg shadow">
       <div className="w-full h-[10%] flex align-center justify-center">
-        <h1 className="text-2xl">{title}</h1>
+        <h1 className="text-xl">{title}</h1>
       </div>
       <div className="w-full h-[90%]">
         <Graph />
       </div>
     </div>
   );
+};
+
+const getGraphYWidth = (data: Array<LineProps>) => {
+  let max = 0;
+
+  data.forEach((linedata) => {
+    Object.values(linedata).forEach((point) => {
+      if (typeof point === "number" && point > max) {
+        max = point;
+      }
+    });
+  });
+
+  const width = Math.log(max) * 4;
+  if (max === 0 || width < 30) return 30;
+  if (width > 200) return 60;
+
+  return width;
 };

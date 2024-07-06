@@ -6,13 +6,13 @@ import { OptionsPanel } from "./OptionsPanel";
 import { useInputValueContext, useOptionContext } from "@/data";
 import { HeaderInput, XIcon } from "../common";
 import {
-  deletePageCookies,
+  deletePageStorage,
   getAllPages,
-  setCookies,
+  setStorage,
   transformFromURL,
   transformToURL,
   useSavePage,
-} from "@/data/utils";
+} from "@/data";
 import { useRouter } from "next/navigation";
 import { SectionCard } from "../common/styles";
 
@@ -52,7 +52,7 @@ const Menu = ({
                 if (pageIsSet()) savePage();
 
                 const url = transformToURL(pageName);
-                setCookies(url, "temp", {});
+                setStorage(url, "temp", {});
                 router.push(`/${url}`);
               }}
             />
@@ -123,7 +123,7 @@ const Menu = ({
         </button>
         <XIcon
           deleteFunction={() => {
-            deletePageCookies(pageID);
+            deletePageStorage(pageID);
             router.push("/");
             router.refresh();
           }}

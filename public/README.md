@@ -2,6 +2,20 @@
 
 **&#x26A0; Notice:** If you want to save your work, don't forget to hit ctrl/cmd for pc/mac + s. This will save your data to your cookies (everything is saved on your computer 🚀). **Do not** delete the cookies on this website if you want to keep your work.
 
+## How this works
+
+This app is basically a concatenation of graph calculator with the output graphed out.
+
+The different inputs are divided in 2 categories:
+- **Expenses/Income** (APY = 0)
+- **Investments** (APY not = 0)
+
+... where APY is appreciation per year.
+
+The Expenses/Income category will be graphed out in the Monthly Balance graph and the Investments category in the Investment graph. For each month, the resulting balance of all your expenses and incomes will be dumped in an investment. This is why **you need at least one investment (APY not = 0) input to your page**. If you don't want this behaviour, just create another input with a incredibly small APY.
+
+What differentiates expenses from income is that expenses are negative and income is positive when inputting in `Contribution / Month` or `Current Value` categories.
+
 ## Pages
 Pages help you organise your different calculations. Each page is an isolated environment, with it's own inputs and options.
 
@@ -21,7 +35,7 @@ You can start by adding categories and values in the Inputs tab on the left. Thi
 
 - **One-Time:** sets the end date to the start date.
 - **No End Date:** sets the end date in the year 2500.
-- **CI = Inflation:** sets the CAPY to the inflation set in the options.
+- **CI = Inflation:** sets the Contribution IPY to the inflation set in the options.
 
 ## Options
 - **Constants**:

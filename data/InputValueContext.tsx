@@ -3,7 +3,8 @@
 import { createContext, useReducer, useContext, ReactNode } from "react";
 import { getNewKey } from "./processingFunctions";
 
-import { getCookies, getCurMonth, setCookies } from "./utils";
+import { getStorage, setStorage } from "./localStorage";
+import {getCurMonth} from "./utils"
 
 export interface InputValue {
   Title: string;
@@ -171,7 +172,7 @@ export const InputValueProvider = ({
 }) => {
   const [state, dispatch] = useReducer(
     InputValuesReducer,
-    getCookies(page, "inputValues")
+    getStorage(page, "inputValues")
   );
 
   const inputValueFunctions = {
@@ -243,11 +244,11 @@ export const InputValueProvider = ({
 
     saveInputValueContext: () => {
       if (!page) return;
-      setCookies(page, "inputValues", state);
+      setStorage(page, "inputValues", state);
     },
 
     checkInputValueChange: () => {
-      const cookies = getCookies(page, "inputValues");
+      const cookies = getStorage(page, "inputValues");
       return JSON.stringify(cookies) !== JSON.stringify(state);
     },
 

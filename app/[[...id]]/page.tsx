@@ -3,8 +3,8 @@
 import {
   InputValueProvider,
   OptionProvider,
-  useAddNotice,
   useSaveContexts,
+  useSaveOnUnload,
 } from "@/data";
 import { useState } from "react";
 import dynamic from "next/dynamic";
@@ -34,7 +34,7 @@ export default function Home({ params }: { params: { id: string } }) {
 
 const ProvidedHome = () => {
   useSaveContexts();
-  useAddNotice();
+  useSaveOnUnload();
 
   const [openInstructions, setOpenInstructions] = useState<boolean>(false);
 
