@@ -1,6 +1,6 @@
 # Fin-Planning
 
-**&#x26A0; Notice:** If you want to save your work, don't forget to hit ctrl/cmd for pc/mac + s. This will save your data to your cookies (everything is saved on your computer 🚀). **Do not** delete the cookies on this website if you want to keep your work.
+**&#x26A0; Notice:** If you want to save your work, don't forget to hit ctrl/cmd for pc/mac + s. This will save your data to your browser's local storage (everything is saved on your computer 🚀). **Do not** delete your browsing data on this website if you want to keep your work.
 
 ## How this works
 
