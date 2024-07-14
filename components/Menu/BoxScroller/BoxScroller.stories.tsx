@@ -92,5 +92,5 @@ const Child = () => {
     }
   }, [isReady, setInputValues]);
 
-  return isReady ? <BoxScroller /> : null;
+  return isReady ? <BoxScroller rawData={true} /> : null;
 };

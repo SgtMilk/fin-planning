@@ -73,11 +73,9 @@ export const GraphCard = ({ title, data }: GraphCardProps) => {
           <Line
             key={dataKey}
             type="monotone"
-            // isAnimationActive={false}
             dataKey={dataKey}
             stroke={generateRandomColor()}
             isAnimationActive={false}
-            // dot={false}
           />
         ))}
       </LineChart>

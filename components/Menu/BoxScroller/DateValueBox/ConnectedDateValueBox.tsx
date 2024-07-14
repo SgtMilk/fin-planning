@@ -5,9 +5,13 @@ import { DragObject } from "@/components/common";
 
 export interface ConnectedDateValueBoxProps {
   id: string;
+  fullInputs: boolean;
 }
 
-export const ConnectedDateValueBox = ({ id }: ConnectedDateValueBoxProps) => {
+export const ConnectedDateValueBox = ({
+  id,
+  fullInputs,
+}: ConnectedDateValueBoxProps) => {
   const { getInputValue, modifyInputValue, deleteInputValue } =
     useInputValueContext();
 
@@ -19,9 +23,18 @@ export const ConnectedDateValueBox = ({ id }: ConnectedDateValueBoxProps) => {
     modifyInputValue(id, key, value);
   const deleteFunction = () => deleteInputValue(id);
 
+  if (fullInputs)
+    return (
+      <DragObject itemID={id}>
+        <DateValueBox
+          {...{ value: oldValue, updateValue, deleteFunction, fullInputs }}
+        />
+      </DragObject>
+    );
+
   return (
-    <DragObject itemID={id}>
-      <DateValueBox {...{ value: oldValue, updateValue, deleteFunction }} />
-    </DragObject>
+    <DateValueBox
+      {...{ value: oldValue, updateValue, deleteFunction, fullInputs }}
+    />
   );
 };

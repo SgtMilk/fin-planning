@@ -21,6 +21,7 @@ enum MenuState {
   Main,
   Options,
   Inputs,
+  "Raw Data",
 }
 
 const Menu = ({
@@ -67,15 +68,19 @@ const Menu = ({
           <div>
             <Button to={MenuState.Inputs} />
             <Button to={MenuState.Options} />
+            <Button to={MenuState["Raw Data"]} />
             {isEmpty() ? null : <InstructionsButton />}
           </div>
         );
       }
+      case MenuState.Inputs: {
+        return <BoxScroller rawData={false} />;
+      }
       case MenuState.Options: {
         return <OptionsPanel />;
       }
-      case MenuState.Inputs: {
-        return <BoxScroller />;
+      case MenuState["Raw Data"]: {
+        return <BoxScroller rawData={true} />;
       }
     }
   };

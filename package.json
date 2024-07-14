@@ -20,7 +20,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18",
     "react-markdown": "8",
-    "recharts": "^2.12.7"
+    "recharts": "^2.13.0-alpha.4"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^8.1.10",

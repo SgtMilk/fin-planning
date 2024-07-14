@@ -5,6 +5,7 @@ import { getNewKey } from "./processingFunctions";
 
 import { getStorage, setStorage } from "./localStorage";
 import {getCurMonth} from "./utils"
+import { Island_Moments } from "next/font/google";
 
 export interface InputValue {
   Title: string;
@@ -38,6 +39,8 @@ export const inputValueKeys: InputValueKey[] = [
   "Type",
 ];
 
+export type InputValueTypes = "Income"|"Expenses"|"Investments"
+
 export interface InputValueStore {
   [key: string]: InputValue;
 }
@@ -65,6 +68,7 @@ interface ContextFunctions {
   setInputValues: (data: Array<InputValue>) => void;
   addInputValue: (data: InputValue) => void;
   addEmptyInputValue: (type: string) => void;
+  addEmptyInputValueByType: (type: InputValueTypes) => void;
   modifyInputValue: (
     id: string,
     key: InputValueKey,
@@ -75,7 +79,8 @@ interface ContextFunctions {
   editSectionTitle: (oldValue: string, newValue: string) => void;
   getInputValue: (id: string) => InputValue;
   getInputValueKeys: () => Array<string>;
-  getInputValueKeysByType: (type: string) => Array<string>;
+  getInputValueKeysByTitle: (title: string) => Array<string>;
+  getInputValueKeysByType: (type: InputValueTypes) => Array<string>;
   getInvestmentInputValueKeys: () => Array<string>;
   getTypes: () => Array<string>;
   saveInputValueContext: () => void;
@@ -105,6 +110,12 @@ const InputValueContext = createContext<ContextFunctions>(
   undefined as unknown as ContextFunctions
 );
 
+const fixInputValue = (value:InputValue) => {
+  const isInvestment = value["APY (%)"] !== 0
+
+  if(isInvestment) value["End Date"] = "2500-01"
+}
+
 export const useInputValueContext = (): ContextFunctions =>
   useContext(InputValueContext);
 
@@ -114,8 +125,11 @@ const InputValuesReducer = (
 ): InputValueStore => {
   switch (action.type) {
     case ReducerTypes.SET_STORE:
+      for(const key in action.data) fixInputValue(action.data[key])
+    
       return action.data;
     case ReducerTypes.SET_INPUT_VALUES:
+      action.data.forEach((value:InputValue) => fixInputValue(value))
       return action.data.reduce(
         (accumulator: InputValueStore, inputValue: InputValue) => ({
           ...accumulator,
@@ -125,13 +139,16 @@ const InputValuesReducer = (
       );
 
     case ReducerTypes.ADD_INPUT_VALUE:
+      fixInputValue(action.data)
       return { [getNewKey()]: action.data, ...state };
 
     case ReducerTypes.MODIFY_INPUT_VALUE:
       const id: string = action.data.id;
       const key: InputValueKey = action.data.key;
+
       if (id in state && key in state[id]) {
         state[id][key] = action.data.value as never; // little type hack
+        fixInputValue(state[id])
         return { ...state };
       }
       return state;
@@ -192,6 +209,19 @@ export const InputValueProvider = ({
       });
     },
 
+    addEmptyInputValueByType: (type: InputValueTypes) => {
+      const def = getDefaultInputValue(type)
+
+      if(type === "Investments")def["APY (%)"] = 1;
+      else if(type === "Income") def["Contribution / Month"] = 1;
+      else if(type === "Expenses") def["Contribution / Month"] = -1
+
+      dispatch({
+        type: ReducerTypes.ADD_INPUT_VALUE,
+        data: def,
+      });
+    },
+
     deleteInputValue: (id: string) =>
       dispatch({ type: ReducerTypes.DELETE_INPUT_VALUE, data: id }),
 
@@ -222,10 +252,29 @@ export const InputValueProvider = ({
 
     getInputValueKeys: () => Object.keys(state),
 
-    getInputValueKeysByType: (type: string) =>
+    getInputValueKeysByTitle: (title: string) =>
       Object.entries(state)
-        .filter(([_, value]) => value["Type"] == type)
+        .filter(([_, value]) => value["Type"] == title)
         .map((entry) => entry[0]),
+
+    getInputValueKeysByType: (type: InputValueTypes) => {
+      switch(type){
+        case "Income":
+          return Object.entries(state)
+            .filter(([_, value]) => Number(value["APY (%)"]) === 0 && value["Contribution / Month"] >= 0)
+            .map((entry) => entry[0])
+        case "Expenses":
+          return Object.entries(state)
+            .filter(([_, value]) => Number(value["APY (%)"] === 0) && value["Contribution / Month"] < 0)
+            .map((entry) => entry[0])
+        case "Investments":
+          return Object.entries(state)
+            .filter(([_, value]) => Number(value["APY (%)"]) !== 0)
+            .map((entry) => entry[0])
+        default: return []
+      }
+    },
+      
 
     getInvestmentInputValueKeys: () => {
       return Object.entries(state)

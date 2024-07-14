@@ -2,7 +2,7 @@
 
 import React, { useRef, useState } from "react";
 import { ConnectedDateValueBox } from "./DateValueBox/ConnectedDateValueBox";
-import { useInputValueContext } from "@/data";
+import { InputValueTypes, useInputValueContext } from "@/data";
 import {
   AddIcon,
   CaretIcon,
@@ -14,8 +14,21 @@ import {
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-export const BoxScroller = () => {
+export const BoxScroller = ({ rawData }: { rawData: boolean }) => {
   const { getTypes, addEmptyInputValue } = useInputValueContext();
+
+  if (!rawData)
+    return (
+      <div className="overflow-y-scroll no-scrollbar h-full">
+        {["Income", "Expenses", "Investments"].map((section) => (
+          <BoxScrollerSection
+            key={section}
+            title={section as InputValueTypes}
+          />
+        ))}
+      </div>
+    );
+
   const sections = getTypes().sort((a, b) =>
     a.localeCompare(b, undefined, { sensitivity: "case" })
   );
@@ -27,32 +40,26 @@ export const BoxScroller = () => {
   };
 
   return (
-    <div>
-      <DndProvider backend={HTML5Backend}>
-        <HeaderInput buttonName="Add Category" inputFunc={addCategory} />
+    <DndProvider backend={HTML5Backend}>
+      <HeaderInput buttonName="Add Category" inputFunc={addCategory} />
 
-        <div className="overflow-y-scroll no-scrollbar h-[calc(100%-5.5rem)]">
-          {sections.map((section) => (
-            <BoxScrollerSection key={section} title={section} />
-          ))}
-        </div>
-      </DndProvider>
-    </div>
+      <div className="overflow-y-scroll no-scrollbar h-[calc(100%-5.5rem)]">
+        {sections.map((section) => (
+          <RawBoxScrollerSection key={section} title={section} />
+        ))}
+      </div>
+    </DndProvider>
   );
 };
 
-interface BoxScrollerSectionProps {
-  title: string;
-}
-
-const BoxScrollerSection = ({ title }: BoxScrollerSectionProps) => {
+const RawBoxScrollerSection = ({ title }: { title: string }) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const titleRef = useRef<string>(title);
-  const { getInputValueKeysByType, addEmptyInputValue, editSectionTitle } =
+  const { getInputValueKeysByTitle, addEmptyInputValue, editSectionTitle } =
     useInputValueContext();
 
-  const keys = getInputValueKeysByType(title);
+  const keys = getInputValueKeysByTitle(title);
 
   const editFunction = () => {
     setIsEdit(!isEdit);
@@ -66,7 +73,7 @@ const BoxScrollerSection = ({ title }: BoxScrollerSectionProps) => {
           isOpen
             ? keys.map((key) => (
                 <div key={key}>
-                  <ConnectedDateValueBox id={key} />
+                  <ConnectedDateValueBox id={key} fullInputs={true} />
                 </div>
               ))
             : null
@@ -104,5 +111,35 @@ const BoxScrollerSection = ({ title }: BoxScrollerSectionProps) => {
         </div>
       </SectionCard>
     </DropTarget>
+  );
+};
+
+const BoxScrollerSection = ({ title }: { title: InputValueTypes }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const { getInputValueKeysByType, addEmptyInputValueByType } =
+    useInputValueContext();
+
+  const keys = getInputValueKeysByType(title);
+
+  return (
+    <SectionCard
+      addDrop={
+        isOpen
+          ? keys.map((key) => (
+              <div key={key}>
+                <ConnectedDateValueBox id={key} fullInputs={false} />
+              </div>
+            ))
+          : null
+      }
+    >
+      <CaretIcon {...{ isOpen, setIsOpen }} />
+
+      <div className="h-7 overflow-none">
+        <p>{title}</p>
+      </div>
+
+      <AddIcon addFunction={() => addEmptyInputValueByType(title)} />
+    </SectionCard>
   );
 };

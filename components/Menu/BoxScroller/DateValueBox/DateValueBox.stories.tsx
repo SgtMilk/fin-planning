@@ -37,6 +37,13 @@ export const Default = () => {
     setData({ ...data, [key]: value });
 
   return (
-    <DateValueBox {...{ value: data, updateValue, deleteFunction: () => {} }} />
+    <DateValueBox
+      {...{
+        value: data,
+        updateValue,
+        deleteFunction: () => {},
+        fullInputs: true,
+      }}
+    />
   );
 };

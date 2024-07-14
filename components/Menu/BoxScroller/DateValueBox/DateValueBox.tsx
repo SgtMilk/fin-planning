@@ -18,12 +18,14 @@ export interface DateValueBoxProps {
   value: InputValue;
   updateValue: (key: InputValueKey, value: string | number | boolean) => void;
   deleteFunction: () => void;
+  fullInputs: boolean;
 }
 
 export const DateValueBox = ({
   value,
   updateValue,
   deleteFunction,
+  fullInputs,
 }: DateValueBoxProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(value.Title === "New Value");
   const [trigger, setTrigger] = useState<boolean>(false);
@@ -35,53 +37,42 @@ export const DateValueBox = ({
 
   const updatePage = () => setTrigger(!trigger);
 
-  // the inputs and checkboxes of the DateValueBox
-  const inputs = [
-    { label: "Title", type: "text", additionalFields: {} },
-    { label: "Contribution / Month", type: "number", additionalFields: {} },
-    {
-      label: "Start Date",
-      type: "month",
-      additionalFields: { max: value["End Date"] },
-    },
-    {
-      label: "End Date",
-      type: "month",
-      additionalFields: { min: value["Start Date"] },
-    },
-    { label: "Contribution IPY (%)", type: "number", additionalFields: {} },
-    { label: "APY (%)", type: "number", additionalFields: {} },
-    { label: "Current Value", type: "number", additionalFields: {} },
-  ];
+  const isInvestment = value["APY (%)"] !== 0;
 
-  const checkboxes = [
-    [
-      {
-        label: "One-Time",
-        onChange: (e: any) => {
-          updateValue("End Date", value["Start Date"]);
-          updatePage();
-        },
-        defaultValue: value["Start Date"] == value["End Date"],
-      },
-      {
-        label: "No End Date",
-        onChange: (e: any) => {
-          updateValue("End Date", "2500-01");
-          updatePage();
-        },
-        defaultValue: value["End Date"] == "2500-01",
-      },
-      {
-        label: "CI = Inflation",
-        onChange: (e: any) => {
-          updateValue("Contribution IPY (%)", inflation);
-          updatePage();
-        },
-        defaultValue: value["Contribution IPY (%)"] == inflation,
-      },
-    ],
-  ];
+  // the inputs and checkboxes of the DateValueBox
+  const inputs = getAvailableInputs(fullInputs, value);
+
+  const checkboxes =
+    fullInputs || !isInvestment
+      ? [
+          [
+            {
+              label: "One-Time",
+              onChange: (e: any) => {
+                updateValue("End Date", value["Start Date"]);
+                updatePage();
+              },
+              defaultValue: value["Start Date"] == value["End Date"],
+            },
+            {
+              label: "No End Date",
+              onChange: (e: any) => {
+                updateValue("End Date", "2500-01");
+                updatePage();
+              },
+              defaultValue: value["End Date"] == "2500-01",
+            },
+            {
+              label: "CI = Inflation",
+              onChange: (e: any) => {
+                updateValue("Contribution IPY (%)", inflation);
+                updatePage();
+              },
+              defaultValue: value["Contribution IPY (%)"] == inflation,
+            },
+          ],
+        ]
+      : [];
 
   const renderInputs = () =>
     inputs.map(({ label, type, additionalFields }) => {
@@ -129,7 +120,7 @@ export const DateValueBox = ({
         </div>
       )}
       <div className="flex justify-end">
-        {isOpen ? (
+        {isOpen && fullInputs ? (
           <div ref={dragRef} className="px-3">
             <DragIcon />
           </div>
@@ -146,4 +137,65 @@ export const DateValueBox = ({
         : null}
     </InfoCard>
   );
+};
+
+const getAvailableInputs = (fullInputs: boolean, value: InputValue) => {
+  type keys =
+    | "Title"
+    | "Contribution / Month"
+    | "Start Date"
+    | "End Date"
+    | "Contribution IPY (%)"
+    | "APY (%)"
+    | "Current Value";
+
+  const allInputs = {
+    Title: { label: "Title", type: "text", additionalFields: {} },
+    "Contribution / Month": {
+      label: "Contribution / Month",
+      type: "number",
+      additionalFields: {},
+    },
+    "Start Date": {
+      label: "Start Date",
+      type: "month",
+      additionalFields: { max: value["End Date"] },
+    },
+    "End Date": {
+      label: "End Date",
+      type: "month",
+      additionalFields: { min: value["Start Date"] },
+    },
+    "Contribution IPY (%)": {
+      label: "Contribution IPY (%)",
+      type: "number",
+      additionalFields: {},
+    },
+    "APY (%)": { label: "APY (%)", type: "number", additionalFields: {} },
+    "Current Value": {
+      label: "Current Value",
+      type: "number",
+      additionalFields: {},
+    },
+  };
+
+  if (fullInputs) return Object.values(allInputs);
+
+  const contributionLimit =
+    value["Contribution / Month"] >= 0 ? { min: 0 } : { max: -0.01 };
+  allInputs["Contribution / Month"].additionalFields = contributionLimit;
+
+  const isInvestment = value["APY (%)"] != 0;
+
+  const chosenInputs: Array<keys> = isInvestment
+    ? ["Title", "Start Date", "APY (%)", "Current Value"]
+    : [
+        "Title",
+        "Contribution / Month",
+        "Start Date",
+        "End Date",
+        "Contribution IPY (%)",
+      ];
+
+  return chosenInputs.map((title: keys) => allInputs[title]);
 };
