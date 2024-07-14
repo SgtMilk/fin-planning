@@ -82,6 +82,11 @@ export const DateValueBox = ({
           type,
           value: (value as { [key: string]: any })[label],
           onChange: (e: any) => {
+            if (
+              !fullInputs &&
+              isInvalid(value, label as InputValueKey, e.target.value)
+            )
+              return;
             updateValue(label as InputValueKey, e.target.value);
             updatePage();
           },
@@ -198,4 +203,25 @@ const getAvailableInputs = (fullInputs: boolean, value: InputValue) => {
       ];
 
   return chosenInputs.map((title: keys) => allInputs[title]);
+};
+
+const isInvalid = (
+  prevValue: InputValue,
+  label: InputValueKey,
+  newValue: string
+) => {
+  // if is investment and APY is 0
+  if (prevValue["APY (%)"] !== 0) {
+    if (label === "APY (%)" && Number(newValue) === 0) return true;
+    return false;
+  }
+
+  // if is income or expense
+  if (label === "Contribution / Month") {
+    const value = Number(newValue);
+    if (prevValue["Contribution / Month"] >= 0 && value < 0) return true;
+    if (prevValue["Contribution / Month"] < 0 && value >= 0) return true;
+  }
+
+  return false;
 };

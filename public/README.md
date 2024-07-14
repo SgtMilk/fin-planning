@@ -14,14 +14,14 @@ The different inputs are divided in 2 categories:
 
 The Expenses/Income category will be graphed out in the Monthly Balance graph and the Investments category in the Investment graph. For each month, the resulting balance of all your expenses and incomes will be dumped in an investment. This is why **you need at least one investment (APY not = 0) input to your page**. If you don't want this behaviour, just create another input with a incredibly small APY.
 
-What differentiates expenses from income is that expenses are negative and income is positive when inputting in `Contribution / Month` or `Current Value` categories.
+What differentiates expenses from income is that expenses are negative and income is positive when inputting in the `Contribution / Month` category.
 
 ## Pages
 Pages help you organise your different calculations. Each page is an isolated environment, with it's own inputs and options.
 
 ## Inputs
 
-You can start by adding categories and values in the Inputs tab on the left. This app works like a concatenation of multiple financial calculators. Each value has the following options:
+You can start by adding categories and values in the Inputs tab on the left. You can also explore the Raw Data tab, it gives you more liberty on the inputs, and you can choose your own categories. Each value may have the following options depending on the input type:
 
 - **Title:** the displayed title on the graph.
 - **Contribution / Month:** how much money is contributed to this value every month.
