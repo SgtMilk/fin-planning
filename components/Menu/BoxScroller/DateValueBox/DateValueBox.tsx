@@ -80,13 +80,20 @@ export const DateValueBox = ({
         label: label,
         inputProps: {
           type,
-          value: (value as { [key: string]: any })[label],
+          defaultValue: (value as { [key: string]: any })[label],
           onChange: (e: any) => {
             if (
               !fullInputs &&
               isInvalid(value, label as InputValueKey, e.target.value)
-            )
+            ) {
+              e.currentTarget.style.color = "red";
+              e.currentTarget.style.border = "1px solid red";
               return;
+            }
+
+            e.currentTarget.style.color = "";
+            e.currentTarget.style.border = "";
+
             updateValue(label as InputValueKey, e.target.value);
             updatePage();
           },
