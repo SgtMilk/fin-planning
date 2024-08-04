@@ -1,6 +1,8 @@
 import {
   Balance,
+  InputValueKey,
   inputValueKeys,
+  OptionKey,
   optionKeys,
   useInputValueContext,
   useOptionContext,
@@ -20,6 +22,10 @@ const useGetOptionErrors = () => {
   optionKeys.forEach((key) => {
     if (state[key] === undefined)
       errors.push(`[${key}] Option ${key} not set.`);
+  });
+
+  ["First Month", "Last Month"].forEach((key) => {
+    checkDateError(state[key as OptionKey] as string, key, errors);
   });
 
   for (const key in state) {
@@ -88,6 +94,15 @@ const useGetInputValuesErrors = () => {
           `[${state[inputKey].Type}/${state[inputKey].Title}] Input's ${key} not set.`
         );
     });
+
+    ["Start Date", "End Date"].forEach((key) => {
+      checkDateError(
+        state[inputKey][key as InputValueKey] as unknown as string,
+        key,
+        errors
+      );
+    });
+
     for (const key in state[inputKey]) {
       switch (key) {
         case "Title":
@@ -121,4 +136,20 @@ const useGetInputValuesErrors = () => {
   }
 
   return errors;
+};
+
+const checkDateError = (
+  date: string,
+  componentName: string,
+  errors: string[]
+) => {
+  const monthMatch = /^[0-9]{4}-(01|02|03|04|05|06|07|08|09|10|11|12)$/gm;
+  const result = monthMatch.test(date);
+
+  // if there is a match, all is good
+  if (result) return;
+
+  errors.push(
+    `[${componentName}] Month ${date} is not a 0000-01 to 9999-12 valid format`
+  );
 };
