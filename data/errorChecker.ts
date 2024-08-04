@@ -25,7 +25,11 @@ const useGetOptionErrors = () => {
   });
 
   ["First Month", "Last Month"].forEach((key) => {
-    checkDateError(state[key as OptionKey] as string, key, errors);
+    const month = state[key as OptionKey] as string;
+    if (checkDateError(month))
+      errors.push(
+        `[${key}] ${key} ${month} is not a 0000-01 to 9999-12 valid format`
+      );
   });
 
   for (const key in state) {
@@ -88,19 +92,20 @@ const useGetInputValuesErrors = () => {
   const errors: string[] = [];
 
   for (const inputKey in state) {
+    const err = (errString: string) => {
+      errors.push(
+        `[${state[inputKey].Type}/${state[inputKey].Title}] ${errString}`
+      );
+    };
+
     inputValueKeys.forEach((key) => {
-      if (state[inputKey][key] === undefined)
-        errors.push(
-          `[${state[inputKey].Type}/${state[inputKey].Title}] Input's ${key} not set.`
-        );
+      if (state[inputKey][key] === undefined) err(`Input's ${key} not set.`);
     });
 
     ["Start Date", "End Date"].forEach((key) => {
-      checkDateError(
-        state[inputKey][key as InputValueKey] as unknown as string,
-        key,
-        errors
-      );
+      const month = state[inputKey][key as InputValueKey] as unknown as string;
+      if (checkDateError(month))
+        err(`${key} ${month} is not a 0000-01 to 9999-12 valid format`);
     });
 
     for (const key in state[inputKey]) {
@@ -116,18 +121,13 @@ const useGetInputValuesErrors = () => {
               state[inputKey]["End Date"] as string
             ) > 0;
           if (startDateFault)
-            errors.push(
-              `[${state[inputKey].Type}/${state[inputKey].Title}] Input's start date is chronologically after it's end date.`
-            );
+            err("Input's start date is chronologically after it's end date.");
           break;
         case "End Date":
           break;
         case "Contribution IPY (%)":
         case "APY (%)":
-          if (state[inputKey][key] < 0)
-            errors.push(
-              `[${state[inputKey].Type}/${state[inputKey].Title}] Input's ${key} is below 0.`
-            );
+          if (state[inputKey][key] < 0) err(`Input's ${key} is below 0.`);
           break;
         default:
           console.error("No Error Checking for", key);
@@ -138,18 +138,7 @@ const useGetInputValuesErrors = () => {
   return errors;
 };
 
-const checkDateError = (
-  date: string,
-  componentName: string,
-  errors: string[]
-) => {
+const checkDateError = (date: string) => {
   const monthMatch = /^[0-9]{4}-(01|02|03|04|05|06|07|08|09|10|11|12)$/gm;
-  const result = monthMatch.test(date);
-
-  // if there is a match, all is good
-  if (result) return;
-
-  errors.push(
-    `[${componentName}] Month ${date} is not a 0000-01 to 9999-12 valid format`
-  );
+  return !monthMatch.test(date);
 };
