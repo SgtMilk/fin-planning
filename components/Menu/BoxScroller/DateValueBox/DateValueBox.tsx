@@ -1,7 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { InputValue, InputValueKey, useOptionContext } from "@/data";
+import React, { useRef, useState } from "react";
+import {
+  InputValue,
+  InputValueKey,
+  InputValueType,
+  useOptionContext,
+} from "@/data";
 import {
   CaretIcon,
   DragIcon,
@@ -16,7 +21,7 @@ import {
 
 export interface DateValueBoxProps {
   value: InputValue;
-  updateValue: (key: InputValueKey, value: string | number | boolean) => void;
+  updateValue: (key: InputValueKey, value: InputValueType) => void;
   deleteFunction: () => void;
   fullInputs: boolean;
 }
@@ -28,19 +33,27 @@ export const DateValueBox = ({
   fullInputs,
 }: DateValueBoxProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(value.Title === "New Value");
-  const [trigger, setTrigger] = useState<boolean>(false);
 
   const dragRef = useDragRefContext();
 
   const { getOption } = useOptionContext();
   const inflation = getOption("Inflation");
 
-  const updatePage = () => setTrigger(!trigger);
-
   const isInvestment = value["APY (%)"] !== 0;
 
   // the inputs and checkboxes of the DateValueBox
   const inputs = getAvailableInputs(fullInputs, value);
+
+  const inputRefs: {
+    [key: string]: React.MutableRefObject<HTMLInputElement | null>;
+  } = {};
+  inputs.forEach((inp) => {
+    inputRefs[inp.label] = useRef(null);
+  });
+  const valueRerender = (key: InputValueKey, newValue: InputValueType) => {
+    if (inputRefs[key].current === null) return;
+    inputRefs[key].current.value = String(newValue);
+  };
 
   const checkboxes =
     fullInputs || !isInvestment
@@ -49,24 +62,24 @@ export const DateValueBox = ({
             {
               label: "One-Time",
               onChange: (e: any) => {
+                valueRerender("End Date", value["Start Date"]);
                 updateValue("End Date", value["Start Date"]);
-                updatePage();
               },
               defaultValue: value["Start Date"] == value["End Date"],
             },
             {
               label: "No End Date",
               onChange: (e: any) => {
+                valueRerender("End Date", "2500-01");
                 updateValue("End Date", "2500-01");
-                updatePage();
               },
               defaultValue: value["End Date"] == "2500-01",
             },
             {
               label: "CI = Inflation",
               onChange: (e: any) => {
+                valueRerender("Contribution IPY (%)", inflation);
                 updateValue("Contribution IPY (%)", inflation);
-                updatePage();
               },
               defaultValue: value["Contribution IPY (%)"] == inflation,
             },
@@ -95,8 +108,8 @@ export const DateValueBox = ({
             e.currentTarget.style.border = "";
 
             updateValue(label as InputValueKey, e.target.value);
-            updatePage();
           },
+          ref: inputRefs[label],
           ...additionalFields,
         },
       };
@@ -105,7 +118,7 @@ export const DateValueBox = ({
 
   const renderCheckBoxes = () =>
     checkboxes.map((block, i) => (
-      <div className="flex flex-col justify-end" key={`chekboxes block ${i}`}>
+      <div className="flex flex-col justify-end" key={`checkboxes block ${i}`}>
         {block.map(({ label, onChange, defaultValue }) => {
           const props = {
             label: label,
