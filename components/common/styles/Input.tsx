@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React from "react";
 
 export const Input = ({
   htmlProps,
@@ -8,14 +8,6 @@ export const Input = ({
     HTMLInputElement
   >;
 }) => {
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  const ref = htmlProps.ref
-    ? (htmlProps.ref as React.MutableRefObject<HTMLInputElement>)
-    : { current: 0 };
-  useEffect(() => {
-    forceUpdate();
-  }, [ref.current]);
-
   const inputProps = {
     ...htmlProps,
     className:
@@ -56,15 +48,6 @@ export const CheckboxInput = ({
     HTMLInputElement
   >;
 }) => {
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
-  const ref = htmlProps.ref
-    ? (htmlProps.ref as React.MutableRefObject<HTMLInputElement>)
-    : { current: 0 };
-  if (ref && ref.current)
-    useEffect(() => {
-      forceUpdate();
-    }, [ref.current]);
-
   const inputProps = {
     ...htmlProps,
     type: "checkbox",

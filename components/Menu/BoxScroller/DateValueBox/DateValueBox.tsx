@@ -47,11 +47,12 @@ export const DateValueBox = ({
   const inputRefs: {
     [key: string]: React.MutableRefObject<HTMLInputElement | null>;
   } = {};
-  inputs.forEach((inp) => {
-    inputRefs[inp.label] = useRef(null);
-  });
+  inputRefs["End Date"] = useRef(null);
+  inputRefs["Contribution IPY (%)"] = useRef(null);
+
   const valueRerender = (key: InputValueKey, newValue: InputValueType) => {
-    if (inputRefs[key].current === null) return;
+    if (!inputRefs || !inputRefs[key] || inputRefs[key].current == null) return;
+    // @ts-ignore
     inputRefs[key].current.value = String(newValue);
   };
 

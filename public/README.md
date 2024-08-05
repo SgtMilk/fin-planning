@@ -1,6 +1,6 @@
 # Fin-Planning
 
-**&#x26A0; Notice:** All data is saved in your browser's `localStorage`, which means that all the information you input stays **locally in your browser** and only this website can access this data. Be careful though, if you delete all website information in your settings, you will lose your progess.
+**&#x26A0; Notice:** All data is saved in your browser's `localStorage`, which means that all the information you input stays **locally in your browser** and only this website can access this data. Be careful though, if you delete all website information in your settings, you will lose your progress.
 
 ## How this works
 
@@ -13,13 +13,15 @@ The different inputs are divided in 2 categories:
 
 ... where APY is appreciation per year.
 
-The Expenses/Income category will be graphed out in the Monthly Balance graph and the Investments category in the Investment graph. For each month, the resulting balance of all your expenses and incomes will be dumped in an investment. This is why **you need at least one investment (APY not = 0) input to your page**. If you don't want this behaviour, just create another input with a incredibly small APY.
+The Expenses/Income category will be graphed out in the Monthly Balance graph and the Investments category in the Investment graph. For each month, the resulting balance of all your expenses and incomes will be dumped in an investment. This is why **you need at least one investment (APY not = 0) input to your page**. If you don't want this behavior, just create another input with a incredibly small APY.
 
 What differentiates expenses from income is that expenses are negative and income is positive in the `Contribution / Month` category.
 
+![Tutorial GIF](Tutorial.gif)
+
 ## Pages
 
-Pages help you organise your different calculations. Each page is an isolated environment, with it's own inputs and options.
+Pages help you organize your different calculations. Each page is an isolated environment, with it's own inputs and options.
 
 ## Inputs
 
