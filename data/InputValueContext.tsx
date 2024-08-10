@@ -90,7 +90,7 @@ interface ContextFunctions {
   state: InputValueStore;
 }
 
-const getDefaultInputValue = (type: string) => {
+export const getDefaultInputValue = (type: string) => {
   const curMonth = getCurMonth();
   const emptyInputValue = {
     Title: "New Value",

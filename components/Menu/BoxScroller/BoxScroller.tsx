@@ -2,9 +2,14 @@
 
 import React, { useRef, useState } from "react";
 import { ConnectedDateValueBox } from "./DateValueBox/ConnectedDateValueBox";
-import { InputValueTypes, useInputValueContext } from "@/data";
+import {
+  getDefaultInputValue,
+  InputValueTypes,
+  useInputValueContext,
+} from "@/data";
 import {
   AddIcon,
+  Button,
   CaretIcon,
   DropTarget,
   EditIcon,
@@ -13,13 +18,54 @@ import {
 } from "@/components/common";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { parseCSV } from "@/data/processCSV";
 
 export const BoxScroller = ({ rawData }: { rawData: boolean }) => {
-  const { getTypes, addEmptyInputValue } = useInputValueContext();
+  const { getTypes, addEmptyInputValue, addInputValue } =
+    useInputValueContext();
 
-  if (!rawData)
+  if (!rawData) {
+    const addBalance = () => {
+      let input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".csv";
+
+      input.addEventListener("cancel", () => {
+        console.log("Cancelled.");
+      });
+      input.addEventListener("change", async () => {
+        if (!input.files || input.files.length != 1) {
+          console.error("Wrong number of files, only one file is accepted.");
+          return;
+        }
+
+        const parsedData = await parseCSV(input.files[0]);
+
+        if (!parsedData) {
+          console.error("Could not parse file");
+          return;
+        }
+
+        ["Income", "Expenses"].forEach((type) => {
+          const iv = getDefaultInputValue(type);
+          iv["Title"] = `Monthly ${type}: ${new Date().toJSON().slice(0, 10)}`;
+          iv["Contribution / Month"] =
+            parsedData[type === "Income" ? "positive" : "negative"];
+          iv["End Date"] = "2500-01";
+          addInputValue(iv);
+        });
+
+        input.remove();
+      });
+
+      input.click();
+    };
+
     return (
       <div className="overflow-y-scroll no-scrollbar h-full">
+        <div className="w-full py-3.5 flex align-center justify-center bg-slate-300 dark:bg-slate-950">
+          <Button buttonName="Add Balance from CSV" handleFunc={addBalance} />
+        </div>
         {["Income", "Expenses", "Investments"].map((section) => (
           <BoxScrollerSection
             key={section}
@@ -28,6 +74,7 @@ export const BoxScroller = ({ rawData }: { rawData: boolean }) => {
         ))}
       </div>
     );
+  }
 
   const sections = getTypes().sort((a, b) =>
     a.localeCompare(b, undefined, { sensitivity: "case" })

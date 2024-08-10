@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Input } from ".";
+import { Button, Input } from ".";
 
 export interface HeaderInputProps {
   buttonName: string;
@@ -34,16 +34,14 @@ export const HeaderInput = ({ buttonName, inputFunc }: HeaderInputProps) => {
       >
         <Input htmlProps={inputProps} />
         <div className="w-10" />
-        <button
-          className="bg-cyan-700 hover:bg-cyan-900 text-white font-bold py-2 px-4 rounded whitespace-nowrap"
-          onClick={() => {
+        <Button
+          buttonName={buttonName}
+          handleFunc={() => {
             if (!input.current || input.current === "") return;
             inputFunc(input.current);
             clearInput();
           }}
-        >
-          {buttonName}
-        </button>
+        />
       </form>
     </div>
   );
