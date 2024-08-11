@@ -12,7 +12,10 @@ export const parseCSV = async (file: File) => {
     });
   });
 
-  if (!data) return;
+  if (!data) {
+    alert("Data in CSV file could not be parsed.");
+    return;
+  }
 
   let startPointer = 0;
   let mapping = null;
@@ -25,7 +28,7 @@ export const parseCSV = async (file: File) => {
       else return "other";
     });
 
-    if (tempMapping.includes("price")) {
+    if (tempMapping.includes("price") && tempMapping.includes("date")) {
       mapping = tempMapping;
       break;
     }
@@ -33,7 +36,10 @@ export const parseCSV = async (file: File) => {
     startPointer++;
   }
 
-  if (!mapping) return;
+  if (!mapping) {
+    alert("Could not find a row in the CSV file with a date and a price.");
+    return;
+  }
 
   const dateIndex = mapping.indexOf("date");
   const priceIndex = mapping.indexOf("price");
@@ -91,8 +97,8 @@ export const parseCSV = async (file: File) => {
   });
 
   const len = Object.keys(monthlyBalance).length;
-  result.positive /= len;
-  result.negative /= len;
+  result.positive = parseFloat((result.positive / len).toFixed(2));
+  result.negative = parseFloat((result.negative / len).toFixed(2));
 
   return result;
 };

@@ -41,6 +41,16 @@ Each value may have the following options depending on the input type:
 - **No End Date:** sets the end date in the year 2500.
 - **CI = Inflation:** sets the Contribution IPY to the inflation set in the options.
 
+### Input from CSV
+
+There is also an integrated way to get your average income and expenses per month.
+
+- Download tabulated data of all your recent transactions from your bank accounts in CSV format.
+- Click on the `Add Balance from CSV` button in the Inputs tab.
+- Select the .csv file you just downloaded.
+
+This will get you 2 new inputs, one expense and one income, which are the averages per month of each. Note that your CSV file must include a date and an amount at every row (except titles).
+
 ## Options
 
 - **Constants**:
