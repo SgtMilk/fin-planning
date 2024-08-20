@@ -105,13 +105,35 @@ export const DragIcon = () => {
   const props = {
     handleFunction: () => {},
     component: [
-      <path key="path" d="M5.2 9l-3 3 3 3M9 5.2l3-3 3 3M15 18.9l-3 3-3-3M18.9 9l3 3-3 3M3.3 12h17.4M12 3.2v17.6"/>
+      <path
+        key="path"
+        d="M5.2 9l-3 3 3 3M9 5.2l3-3 3 3M15 18.9l-3 3-3-3M18.9 9l3 3-3 3M3.3 12h17.4M12 3.2v17.6"
+      />,
     ],
     isButton: false,
     isDark: true,
-    size: "10",
   };
   return <SvgIcon {...props} />;
+};
+
+export const WarningButton = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="80"
+      height="80"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={!isDarkMode() ? "#0f172a" : "white"}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>
+  );
 };
 
 export const SvgIcon = ({
@@ -134,8 +156,8 @@ export const SvgIcon = ({
           isDark ? "slate-900" : "white"
         }`}
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
+        width={size}
+        height={size}
         viewBox={`0 0 24 24`}
         fill="none"
         stroke={isDark ? "#0f172a" : "white"}
